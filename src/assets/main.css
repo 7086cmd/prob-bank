@@ -1,35 +1,55 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+/* @import './base.css'; */
+@media print {
+  .print-invisible {
+    display: none;
   }
-}
 
-@media (min-width: 1024px) {
+  .print-visible {
+    display: block;
+  }
+
+  .divider_top {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  .saparation {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  table {
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+  }
+
+  th {
+    color: #000000 !important;
+    font-weight: bold;
+  }
+
+  td {
+    font-family: 'Times New Roman', '宋体';
+    border: 0.3px solid #000000 !important;
+  }
+
+  th {
+    font-family: 'Times New Roman', '黑体';
+  }
+
+  .content {
+    font-family: 'Times New Roman', '宋体';
+  }
+
+  .origin {
+    font-family: 'Times New Roman', '微软雅黑';
+  }
+
+  .infor {
+    display: none !important;
+  }
+
   body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    line-height: 2
   }
 }
