@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 /* global defineProps */
-import type { Problem } from '@/../@types/problem'
+import type { AnswerProblem, Problem } from '@/../@types/problem'
 import { toRefs } from 'vue'
 import PContent from '../content/PContent.vue'
 import { useStatusStore } from '@/stores/status'
 import { getOrderText } from '@/utils/orderResult'
+import PSubProblem from './PSubProblem.vue'
 
 const status = useStatusStore()
 
@@ -29,6 +30,11 @@ const { problem, type, order, level } = toRefs(props)
         })
       }}</span>
       <PContent :content="problem.content" />
+      <PSubProblem
+        :problems="(problem as (AnswerProblem)).subProblems"
+        :level="level as (0 | 1)"
+        :mode="type"
+      />
     </div>
   </div>
 </template>

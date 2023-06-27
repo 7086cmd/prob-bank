@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 /* global defineProps */
-import type { Problem } from '@/../@types/problem'
+import type { BlankProblem, Problem } from '@/../@types/problem'
 import { toRefs } from 'vue'
 import PContent from '../content/PContent.vue'
 import { useStatusStore } from '@/stores/status'
@@ -29,6 +29,11 @@ const { problem, type, order, level } = toRefs(props)
         })
       }}</span>
       <PContent :content="problem.content" />
+      <PSubProblem
+        :problems="(problem as (BlankProblem)).subProblems"
+        :level="level as (0 | 1)"
+        :mode="type"
+      />
     </div>
   </div>
 </template>

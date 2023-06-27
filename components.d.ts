@@ -24,6 +24,7 @@ declare module '@vue/runtime-core' {
     PJudgeProblem: typeof import('./src/components/problems/PJudgeProblem.vue')['default']
     PLatex: typeof import('./src/components/content/PLatex.vue')['default']
     PProblem: typeof import('./src/components/problems/PProblem.vue')['default']
+    PSubProblem: typeof import('./src/components/problems/PSubProblem.vue')['default']
     PTable: typeof import('./src/components/content/PTable.vue')['default']
     PText: typeof import('./src/components/content/PText.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -32,12 +32,12 @@ export interface MultipleChoiceProblem extends Problem {
 export interface BlankProblem extends Problem {
   type: 'blank'
   answer: string[]
-  subProblems: BlankProblem[]
+  subProblems: { id: number; problem: BlankProblem }[]
 }
 
 export interface AnswerProblem extends Problem {
   type: 'answer'
   answer: string // 答案
   procedure: string // 答案解析
-  subProblems: AnswerProblem[] // 子题目
+  subProblems: { id: number; problem: AnswerProblem | BlankProblem }[] // 子题目
 }

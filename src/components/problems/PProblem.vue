@@ -13,6 +13,7 @@ import { ElCard } from 'element-plus'
 import PChoiceProblem from './PChoiceProblem.vue'
 import PBlankProblem from './PBlankProblem.vue'
 import PAnswerProblem from './PAnswerProblem.vue'
+import { getOrderText } from '@/utils/orderResult'
 
 const status = useStatusStore()
 

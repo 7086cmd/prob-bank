@@ -9,18 +9,18 @@ export const useStatusStore = defineStore({
   state() {
     return {
       type: 'preview', // preview, print
-      fontSize: 12, // 预览时：12，打印时：10.5
+      fontSize: 14, // 12
       answer: true // 是否显示答案
     }
   },
   actions: {
     usePrint() {
       this.type = 'print'
-      this.fontSize = 10.5
+      this.fontSize = 12
     },
     usePreview() {
       this.type = 'preview'
-      this.fontSize = 12
+      this.fontSize = 14
     },
     toggleAnswer() {
       this.answer = !this.answer

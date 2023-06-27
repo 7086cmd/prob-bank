@@ -3,7 +3,7 @@
 import MarkdownIt from 'markdown-it'
 import * as sub from 'markdown-it-sub'
 import * as sup from 'markdown-it-sup'
-import { toRefs } from 'vue';
+import { toRefs, ref } from 'vue'
 import { useStatusStore } from '@/stores/status'
 
 const status = useStatusStore()
@@ -21,9 +21,21 @@ const props = defineProps<{
 
 const { content } = toRefs(props)
 
-const html = md.renderInline(content.value)
+const html = md.renderInline(content.value).replaceAll('\n', '<br />')
+
+const size = ref(status.fontSize + 'px')
+
+status.$subscribe(() => {
+  size.value = status.fontSize + 'px'
+})
 </script>
 
 <template>
-  <span :style="{ fontSize: `${status.fontSize}px` }" v-html="html"></span>
+  <span v-html="html"></span>
 </template>
+
+<style scoped>
+span {
+  font-size: v-bind(size);
+}
+</style>

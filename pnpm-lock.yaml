@@ -39,6 +39,7 @@ specifiers:
   pinia: ^2.1.3
   postcss: ^8.4.24
   prettier: ^2.8.8
+  sass: ^1.63.6
   search-insights: '>= 1 < 3'
   tailwindcss: ^3.3.2
   typescript: ~4.7.4
@@ -98,14 +99,15 @@ devDependencies:
   nprogress: 0.2.0
   postcss: 8.4.24
   prettier: 2.8.8
+  sass: 1.63.6
   tailwindcss: 3.3.2
   typescript: 4.7.4
   unplugin-auto-import: 0.12.2_@vueuse+core@9.13.0
   unplugin-vue-components: 0.22.12_vue@3.3.4
   uuid: 9.0.0
-  vite: 4.3.9_@types+node@18.16.17
-  vitepress: 1.0.0-beta.2_xoedbb7qzelwv35j2iykjmvavm
-  vitest: 0.25.8_jsdom@20.0.3
+  vite: 4.3.9_fcqd4patxc2vgoxnuayz6xnzgq
+  vitepress: 1.0.0-beta.2_3r43o3gh3qkn3cfcwskxc5xpqm
+  vitest: 0.25.8_jsdom@20.0.3+sass@1.63.6
   vue-tsc: 1.6.5_typescript@4.7.4
 
 packages:
@@ -1452,7 +1454,7 @@ packages:
       '@babel/core': 7.22.5
       '@babel/plugin-transform-typescript': 7.22.5_@babel+core@7.22.5
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.22.5
-      vite: 4.3.9_@types+node@18.16.17
+      vite: 4.3.9_fcqd4patxc2vgoxnuayz6xnzgq
       vue: 3.3.4
     transitivePeerDependencies:
       - supports-color
@@ -1465,7 +1467,7 @@ packages:
       vite: ^3.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.3.9_@types+node@18.16.17
+      vite: 4.3.9_fcqd4patxc2vgoxnuayz6xnzgq
       vue: 3.3.4
     dev: true
 
@@ -1476,7 +1478,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.3.9_@types+node@18.16.17
+      vite: 4.3.9_fcqd4patxc2vgoxnuayz6xnzgq
       vue: 3.3.4
     dev: true
 
@@ -3235,6 +3237,10 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /immutable/4.3.0:
+    resolution: {integrity: sha512-0AOCmOip+xgJwEVTQj1EfiDDOkPmuyllDuTuEX+DDXUgapLAsBIfkg3sxCYyCEA8mQqZrrxPUGjcOQ2JS3WLkg==}
+    dev: true
+
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -4582,6 +4588,16 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: true
 
+  /sass/1.63.6:
+    resolution: {integrity: sha512-MJuxGMHzaOW7ipp+1KdELtqKbfAWbH7OLIdoSMnVe3EXPMTmxTmlaZDCTsgIpPCs3w99lLo9/zDKkOrJuT5byw==}
+    engines: {node: '>=14.0.0'}
+    hasBin: true
+    dependencies:
+      chokidar: 3.5.3
+      immutable: 4.3.0
+      source-map-js: 1.0.2
+    dev: true
+
   /saxes/6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
@@ -5246,7 +5262,7 @@ packages:
       vue-demi: 0.14.5_vue@3.3.4
     dev: false
 
-  /vite/4.3.9_@types+node@18.16.17:
+  /vite/4.3.9_fcqd4patxc2vgoxnuayz6xnzgq:
     resolution: {integrity: sha512-qsTNZjO9NoJNW7KnOrgYwczm0WctJ8m/yqYAMAK9Lxt4SoySUfS5S8ia9K7JHpa3KEeMfyF8LoJ3c5NeBJy6pg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -5275,11 +5291,12 @@ packages:
       esbuild: 0.17.19
       postcss: 8.4.24
       rollup: 3.24.0
+      sass: 1.63.6
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress/1.0.0-beta.2_xoedbb7qzelwv35j2iykjmvavm:
+  /vitepress/1.0.0-beta.2_3r43o3gh3qkn3cfcwskxc5xpqm:
     resolution: {integrity: sha512-DBXYjtYbm3W1IPPJ2TiCaK/XK+o/2XmL2+jslOGKm+txcbmG0kbeB+vadC5tCUZA9NdA+9Ywj3M4548c7t/SDg==}
     hasBin: true
     dependencies:
@@ -5294,7 +5311,7 @@ packages:
       mark.js: 8.11.1
       minisearch: 6.1.0
       shiki: 0.14.2
-      vite: 4.3.9_@types+node@18.16.17
+      vite: 4.3.9_fcqd4patxc2vgoxnuayz6xnzgq
       vue: 3.3.4
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -5322,7 +5339,7 @@ packages:
       - universal-cookie
     dev: true
 
-  /vitest/0.25.8_jsdom@20.0.3:
+  /vitest/0.25.8_jsdom@20.0.3+sass@1.63.6:
     resolution: {integrity: sha512-X75TApG2wZTJn299E/TIYevr4E9/nBo1sUtZzn0Ci5oK8qnpZAZyhwg0qCeMSakGIWtc6oRwcQFyFfW14aOFWg==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
@@ -5358,7 +5375,7 @@ packages:
       tinybench: 2.5.0
       tinypool: 0.3.1
       tinyspy: 1.1.1
-      vite: 4.3.9_@types+node@18.16.17
+      vite: 4.3.9_fcqd4patxc2vgoxnuayz6xnzgq
     transitivePeerDependencies:
       - less
       - sass

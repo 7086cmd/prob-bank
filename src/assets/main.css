@@ -48,8 +48,9 @@
   .infor {
     display: none !important;
   }
+}
 
-  body {
-    line-height: 2
-  }
+body {
+  line-height: 2;
+  user-select: none;
 }

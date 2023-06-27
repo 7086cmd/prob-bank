@@ -26,8 +26,8 @@ export interface BlankContent {
 
 export interface TableCell {
   content: (TextContent | FormulaContent | ImageContent | BlankContent)[]
-  colspan: number
-  rowspan: number
+  colspan?: number
+  rowspan?: number
   type: 'cell' | 'header'
 }
 

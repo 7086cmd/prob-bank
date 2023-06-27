@@ -17,5 +17,5 @@ const expression = toRef(props, 'expression')
 </script>
 
 <template>
-  <VueLatex :expression="expression" :fontsize="status.fontSize" />
+  <span>&nbsp;<VueLatex :expression="expression" :fontsize="status.fontSize" />&nbsp;</span>
 </template>
