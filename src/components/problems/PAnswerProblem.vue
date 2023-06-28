@@ -35,6 +35,9 @@ const { problem, type, order, level } = toRefs(props)
         :level="level as (0 | 1)"
         :mode="type"
       />
+      <div v-if="status.answer && (problem as AnswerProblem).answer" class="answer">
+        【答案】<PContent :content="(problem as AnswerProblem).answer" />
+      </div>
     </div>
   </div>
 </template>

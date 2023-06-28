@@ -1,5 +1,11 @@
 /* @import './base.css'; */
 @media print {
+  body {
+    page-break-inside: avoid;
+    page-break-after: avoid;
+    page-break-before: avoid;
+  }
+
   .print-invisible {
     display: none;
   }

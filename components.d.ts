@@ -20,6 +20,7 @@ declare module '@vue/runtime-core' {
     PChoice: typeof import('./src/components/problem/PChoice.vue')['default']
     PChoiceProblem: typeof import('./src/components/problems/PChoiceProblem.vue')['default']
     PContent: typeof import('./src/components/content/PContent.vue')['default']
+    PDisplayProblem: typeof import('./src/components/problems/PDisplayProblem.vue')['default']
     PImage: typeof import('./src/components/content/PImage.vue')['default']
     PJudgeProblem: typeof import('./src/components/problems/PJudgeProblem.vue')['default']
     PLatex: typeof import('./src/components/content/PLatex.vue')['default']

@@ -32,7 +32,7 @@ const choices = new Array(26)
   .fill(0)
   .map((_, index) => String.fromCharCode(65 + index))
 
-const answer = ref<number | number[]>([])
+const answer = ref<number | number[] | null>([])
 
 function atChange() {
   if (problem.value.type === 'single-choice') {
@@ -43,6 +43,11 @@ function atChange() {
 }
 
 atChange()
+
+status.$subscribe(() => {
+  if (!status.answer) answer.value = null
+  else atChange()
+})
 </script>
 
 <template>

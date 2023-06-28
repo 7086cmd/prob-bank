@@ -3,7 +3,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
 const request = axios.create({
-  baseURL: "https://api.example.com", // edit it!
+  baseURL: "http://127.0.0.1:8080/api/v1/", // edit it!
   headers: {
     "Content-type": "application/json",
   },
