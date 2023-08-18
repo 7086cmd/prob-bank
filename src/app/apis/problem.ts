@@ -3,15 +3,6 @@ import dayjs from 'dayjs'
 import { MongoClient, ObjectId } from 'mongodb'
 import { log } from '../log'
 
-async function connect() {
-  const url = 'mongodb://localhost:27017'
-  const client = new MongoClient(url)
-  await client.connect()
-  const db = client.db('prob-bank')
-  const collection = db.collection('problems')
-  return collection
-}
-
 export async function getProblem(id: string) {
   const url = 'mongodb://localhost:27017'
   const client = new MongoClient(url)
@@ -26,6 +17,17 @@ export async function getProblem(id: string) {
   }
   client.close()
   return problem
+}
+
+export async function getProblems() {
+  const url = 'mongodb://localhost:27017'
+  const client = new MongoClient(url)
+  await client.connect()
+  const db = client.db('prob-bank')
+  const collection = db.collection('problems')
+  const problems = await collection.find().toArray()
+  client.close()
+  return problems
 }
 
 export async function getProblemList(filter: {

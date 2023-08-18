@@ -149,7 +149,6 @@ function exists(_id: string) {
 }
 
 function set(_id: string) {
-  console.log('set')
   paper.setItem('problem', _id)
 }
 

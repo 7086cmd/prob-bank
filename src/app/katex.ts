@@ -194,7 +194,9 @@ export default function (md, options) {
   let katexBlock = function (latex) {
     options.displayMode = true
     try {
-      return '<span class="tex">' + katex.renderToString(latex, options) + '</span>'
+      return (
+        '<span class="tex">' + katex.renderToString(latex, options) + '</span>'
+      )
     } catch (error) {
       if (options.throwOnError) {
         console.log(error)

@@ -5,10 +5,6 @@
 
 import { watch, toRefs, ref } from 'vue'
 import MarkdownIt from 'markdown-it'
-import * as sub from 'markdown-it-sub'
-import * as sup from 'markdown-it-sup'
-import * as mark from 'markdown-it-mark'
-// import katex from '@/plugins/katex'
 import { useStatusStore } from '@/stores/status'
 import { ElPopover, ElInput } from 'element-plus'
 
@@ -30,9 +26,6 @@ const md = new MarkdownIt({
   breaks: false,
   typographer: true,
 })
-  .use(sub)
-  .use(sup)
-  .use(mark)
 
 const html = ref(md.renderInline(modelValue.value))
 const editorVal = ref(modelValue.value)

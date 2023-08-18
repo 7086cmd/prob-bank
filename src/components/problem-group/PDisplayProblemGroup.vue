@@ -25,7 +25,6 @@ const errText = ref('')
 const statusCode = ref(200)
 
 getProblemGroup(_id.value).then((resp) => {
-  console.log(resp, 'resp')
   if (resp) {
     problem.value = resp as ProblemGroup
   } else {

@@ -1,7 +1,10 @@
 files:
-  - 'dist/*'
-  - 'dist/**/*'
-  - 'node_modules/**/*'
+  - 'dist/index.html'
+  - 'dist/favicon.jpg'
+  - 'dist/prob-bank.min.js'
+  - 'dist/prob-bank.preload.min.js'
+  - 'dist/assets/**/*.*'
+  - 'dist/assets/*'
 extraMetadata:
   main: dist/prob-bank.min.js
 asar: true

@@ -7,7 +7,6 @@ import PText from './PText.vue'
 import { toRefs } from 'vue'
 import PBlank from './PBlank.vue'
 import PTextEdit from './PTextEdit.vue'
-import PLatex from './PLatex.vue'
 import PFormulaEdit from './PFormulaEdit.vue'
 import PMaterial from './PMaterial.vue'
 

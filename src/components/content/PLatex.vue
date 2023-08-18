@@ -5,7 +5,6 @@
  */
 import { useStatusStore } from '@/stores/status'
 import { toRef, onMounted, ref } from 'vue'
-import katex from 'katex'
 
 const props = defineProps<{
   expression: string
@@ -17,10 +16,7 @@ const renderString = ref('')
 const expression = toRef(props, 'expression')
 
 onMounted(() => {
-  renderString.value = katex.renderToString(expression.value, {
-    displayMode: false,
-    throwOnError: false,
-  })
+  renderString.value = window.probbank.renderKatex(expression.value)
 })
 
 const fontSize = toRef(status, 'fontSize')

@@ -14,12 +14,13 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "watch:app": "rollup -c -w --bundleConfigAsCjs",
-    "compile:app": "rollup -c --bundleConfigAsCjs --target node",
+    "watch": "rollup -c -w --bundleConfigAsCjs",
+    "compile": "rollup -c --bundleConfigAsCjs --target node",
     "run:app": "electron ./dist/app/background.js",
     "build:mac": "electron-builder -m",
     "build:win": "electron-builder -w",
-    "run:all": "pnpm run compile:app & run-p dev watch:app run:app"
+    "run:all": "pnpm run compile:app & run-p dev watch:app run:app",
+    "build:pre": "pnpm run build & pnpm run compile"
   },
   "dependencies": {
     "@algolia/client-search": "^4.19.1",

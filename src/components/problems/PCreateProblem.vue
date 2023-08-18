@@ -117,7 +117,6 @@ watch(
 )
 
 watch(modelValue.value, () => {
-  console.log('check', level.value, modelValue.value)
   emits('update: modelValue', modelValue.value)
   if (modelValue.value.image === '') {
     fileList.value = []

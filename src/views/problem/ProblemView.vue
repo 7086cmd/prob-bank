@@ -6,9 +6,9 @@ import {
   ElDivider,
   ElRow,
   ElCol,
-  ElNotification,
   ElCheckboxButton,
   ElCheckboxGroup,
+ElResult,
 } from 'element-plus'
 import { Right, Plus } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
@@ -16,6 +16,7 @@ import type { AllProblem } from '@/../@types/problem'
 import PProblem from '@/components/problems/PProblem.vue'
 import { useStatusStore } from '@/stores/status'
 import NProgress from 'nprogress'
+import { getProblems } from '@/api'
 
 const router = useRouter()
 const status = useStatusStore()
@@ -26,28 +27,9 @@ const problemSet = ref<AllProblem[]>([])
 
 NProgress.start()
 
-window.probbank
-  .request({
-    pathname: 'problem',
-    method: 'get',
-    request: {
-      params: {
-        _id: 'all',
-      },
-    },
-  })
-  .then((resp) => {
-    NProgress.done()
-    show.value = true
-    console.log(resp)
-    if (resp.status === 'success') problemSet.value = resp.data as AllProblem[]
-    else
-      ElNotification({
-        title: '获取题目列表失败',
-        message: resp.message,
-        type: 'error',
-      })
-  })
+getProblems().then(resp => {
+  problemSet.value = resp as AllProblem[]
+})
 
 const subjects = [
   {
@@ -113,13 +95,6 @@ watch(origin_filter, () => {
 watch(subject_filter, () => {
   show.value = false
   show.value = true
-  console.log(
-    problemSet.value.filter(
-      (x) =>
-        x.data.origin.includes(origin_filter.value) &&
-        subject_filter.value.includes(x.data.subject)
-    )
-  )
 })
 </script>
 
@@ -201,7 +176,7 @@ watch(subject_filter, () => {
     </transition>
 
     <ElDivider v-if="status.type === 'preview'" />
-    <div v-if="show">
+    <div v-if="problemSet.length !== 0">
       <div
         v-for="(item, index) in problemSet.filter(
           (x) =>
@@ -219,5 +194,13 @@ watch(subject_filter, () => {
         />
       </div>
     </div>
+    <ElResult v-else icon="error">
+      <template #title>
+        <div class="text-2xl">暂无题目</div>
+      </template>
+      <template #subTitle>
+        <div class="text-lg">请检查筛选条件</div>
+      </template>
+    </ElResult>
   </div>
 </template>

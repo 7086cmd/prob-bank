@@ -26,7 +26,6 @@ function useEdit() {
 }
 
 function useSave() {
-  console.log('save')
   mode.value = 'view'
   arr.value = md2c(content.value)
   emits('update:modelValue', arr.value)

@@ -21,6 +21,8 @@ export interface ProbBankActions {
   on: <T>(channel: string, listener: (...args: any[]) => void) => T
   invoke: <T>(channel: string, ...args: any[]) => Promise<T>
   send: <T>(channel: string, ...args: any[]) => T
+  renderMarkdown: (mode: 'inline' | 'block', markdown: string) => string
+  renderKatex: (math: string) => string
 }
 
 declare global {

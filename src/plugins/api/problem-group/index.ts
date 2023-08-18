@@ -4,7 +4,6 @@ import { ElNotification } from 'element-plus'
 
 export async function getProblemGroup(_id: string) {
   const resp = await axios.get('/problem-group/' + _id)
-  console.log(resp, _id)
   if (resp.data.status === 'success') {
     return resp.data.data as ProblemGroup
   } else {

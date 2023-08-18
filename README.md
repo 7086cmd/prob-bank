@@ -1,52 +1,29 @@
-# zvms-starter
+# Problem Bank
 
-This template should help get you started developing with Vue 3 in Vite.
+![Problem Bank](./public/favicon.jpg)
 
-## Recommended IDE Setup
+Problem Bank 是一个“划时代”的题库系统。他支持我们快速添加题目并且予以修改、拓展，支持连接不同的数据库，做到轻量化和高效化。
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 项目由来
 
-## Type Support for `.vue` Imports in TS
+在中考冲刺阶段，我尝试了一些题库平台作为来源，但发现它们的排版都有一些共同的问题：
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+1. 跨学科支持不好，譬如“社会”一门学科在初中，分为“历史与社会”以及“道德与法治”，但是它们总是无法在一些平台上面和卷，而且分类的天壤之别导致了组卷也不甚方便。同时，高中的“技术”包含信息技术和通用技术。在一些平台上，信息技术的代码竟然是图片！这导致了后期修改的麻烦和程序的难以阅读。
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+2. 公式的排版等固有问题。一些题库系统直接使用`Latin Modern Math`字体，其他的全部使用`HTML`来实现，显得既不美观，也不优雅。Problem Bank 则将`LaTeX`带入，使用`KaTeX`并且配备`mhchem`宏包，使得公式的排版更加美观。同时，我们也给出了关键字索引，用于不是特别熟悉`LaTeX`的用户。同时，我们将文字（支持 Markdown）和公式分开，这有利于导出为`Word`时，适应`Office ML`或者`MathType`的公式编辑器。
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+3. 界面问题。一些题库系统的界面过于简陋，而且不支持移动端。Problem Bank 则使用了`Vue`框架，使用`Element Plus`组件库，使得界面更加美观，同时也计划支持移动端。
 
-## Customize configuration
+4. 导出排版问题。一些题库系统的导出排版不够美观，且字体单一。Problem Bank 则深耕试卷排版，定义字体使用标准，使得导出的试卷更加美观。
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## 项目架构
 
-## Project Setup
+Problem Bank 采用前后端分离的架构，前端使用`Vue.js`框架，后端使用`Node.js`框架。前端使用`Element Plus`组件库，后端使用`Koa`框架。我们不喜欢传统的数据库，因此我们使用了`MongoDB`作为数据库。这样使得操作更加方便，题目管理也可以直接在数据库中进行，以备不时之需。
 
-```sh
-pnpm install
-```
+## 项目进度
 
-### Compile and Hot-Reload for Development
+目前，第一版本的 Problem Bank 已经大体完成。美中不足的是，这一个版本还不支持打开导出的`.pbpaper`试卷，这是一个遗憾。但是，我们会在第二版本中支持这一功能。
 
-```sh
-pnpm dev
-```
+同时，第一版本的 Problem Bank 还不支持移动端，基于 `Electron` 的架构有时还会出现一点小问题（这不是`Electron`的锅！）。
 
-### Type-Check, Compile and Minify for Production
-
-```sh
-pnpm build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-pnpm test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
+我们目前亟需解决的问题是：`Markdown`的渲染在客户端上有一点问题。

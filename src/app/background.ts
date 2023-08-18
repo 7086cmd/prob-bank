@@ -17,7 +17,12 @@ import Koa from 'koa'
 import KoaRouter from '@koa/router'
 import { bodyParser as KoaBodyparser } from '@koa/bodyparser'
 import KoaCors from '@koa/cors'
-import { getProblem, modifyProblem, deleteProblem } from './apis/problem'
+import {
+  getProblem,
+  modifyProblem,
+  deleteProblem,
+  getProblems,
+} from './apis/problem'
 import type { AllProblem } from '@/../@types/problem'
 import { log } from './log'
 import {
@@ -32,6 +37,23 @@ const router = new KoaRouter()
 
 appServer.use(KoaCors({ origin: '*' }))
 appServer.use(KoaBodyparser())
+
+router.get('/api/v1/problem', async (ctx) => {
+  try {
+    const result = await getProblems()
+    ctx.response.body = {
+      status: 'success',
+      code: 200,
+      data: result,
+    }
+  } catch (e) {
+    ctx.response.body = {
+      status: 'error',
+      code: 500,
+      message: (e as Error).message,
+    }
+  }
+})
 
 router.get('/api/v1/problem/:_id', async (ctx) => {
   try {
@@ -70,7 +92,6 @@ router.get('/api/v1/problem/:_id', async (ctx) => {
 
 router.post('/api/v1/problem', async (ctx) => {
   try {
-    console.log(ctx.request.body)
     const result = await modifyProblem(ctx.request.body as AllProblem)
     if (!result) {
       ctx.response.body = {
@@ -97,7 +118,6 @@ router.post('/api/v1/problem', async (ctx) => {
 
 router.put('/api/v1/problem/:_id', async (ctx) => {
   try {
-    console.log(ctx.request.body)
     if (!ObjectId.isValid(ctx.params._id)) {
       ctx.response.body = {
         status: 'error',
@@ -372,7 +392,7 @@ app.whenReady().then(() => {
   })
 
   if (process.env.NODE_ENV === 'development') {
-    baseWindow.loadURL('http://localhost:5173/home')
+    baseWindow.loadURL(`http://localhost:5173/home`)
     baseWindow.webContents.openDevTools()
   } else {
     baseWindow.loadURL('app://./home')
@@ -403,96 +423,6 @@ app.whenReady().then(() => {
           data: result,
         })
         connection.close()
-      } else if (request.method === 'get') {
-        if (request.request.params._id === 'all') {
-          const result = await collection.find().toArray()
-          result.map((x) => {
-            // @ts-ignore
-            x._id = x._id.toString()
-            return x
-          })
-          event.reply('response', {
-            status: 'success',
-            code: 200,
-            data: result.filter((x) => x.data.origin !== '2022 十校联考'),
-          })
-          connection.close()
-          return
-        }
-        const result = await collection.findOne({
-          _id: new ObjectId(request.request.params._id.toString()),
-        })
-        // @ts-ignore
-        result._id = result._id.toString()
-        if (result === null) {
-          event.reply('response', {
-            status: 'error',
-            code: 404,
-            message: 'Problem not found',
-          })
-        } else {
-          event.reply('response', {
-            status: 'success',
-            code: 200,
-            data: result,
-          })
-        }
-      } else if (request.method === 'post') {
-        if (typeof request.request.body === 'string') {
-          request.request.body = JSON.parse(request.request.body)
-        }
-        delete request.request.body._id
-        const result = await collection.insertOne(request.request.body)
-        event.reply('response', {
-          status: 'success',
-          code: 200,
-          data: result.insertedId.toString(),
-        })
-      } else if (request.method === 'put') {
-        if (typeof request.request.body === 'string') {
-          request.request.body = JSON.parse(request.request.body)
-        }
-        console.log(request.request.body)
-        const deleteResult = await collection.deleteOne({
-          // @ts-ignore
-          _id: new ObjectId(request.request.body._id.toString()),
-        })
-        if (deleteResult.deletedCount === 0) {
-          event.reply('response', {
-            status: 'error',
-            code: 404,
-            message: 'Problem not found',
-          })
-          connection.close()
-          return
-        }
-        request.request.body._id = new ObjectId(
-          // @ts-ignore
-          request.request.body._id.toString()
-        )
-        const result = await collection.insertOne(request.request.body)
-        event.reply('response', {
-          status: 'success',
-          code: 200,
-          data: result.insertedId.toString(),
-        })
-      } else if (request.method === 'delete') {
-        const result = await collection.deleteOne({
-          _id: new ObjectId(request.request.params._id.toString()),
-        })
-        if (result.deletedCount === 0) {
-          event.reply('response', {
-            status: 'error',
-            code: 404,
-            message: 'Problem not found',
-          })
-        } else {
-          event.reply('response', {
-            status: 'success',
-            code: 200,
-            data: result.deletedCount,
-          })
-        }
       }
     }
     connection.close()
@@ -500,7 +430,7 @@ app.whenReady().then(() => {
 
   ipcMain.on(
     'baseWindowAction',
-    (evt, action: 'close' | 'minimize' | 'maximize' | 'fullscreen') => {
+    (_evt, action: 'close' | 'minimize' | 'maximize' | 'fullscreen') => {
       switch (action) {
         case 'close':
           baseWindow.close()
@@ -547,7 +477,7 @@ app.whenReady().then(() => {
             __dirname,
             process.env.NODE_ENV === 'development'
               ? './preload.js'
-              : './prob-bank.preload.js'
+              : './prob-bank.preload.min.js'
           ),
           // contextIsolation: true,
           nodeIntegration: true,

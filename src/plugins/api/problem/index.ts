@@ -16,8 +16,21 @@ export async function getProblem(_id: string) {
   }
 }
 
+export async function getProblems() {
+  const resp = await axios.get('/problem')
+  if (resp.data.status === 'success') {
+    return resp.data.data as AllProblem[]
+  } else {
+    ElNotification({
+      title: `获取题目列表失败（${resp.data.code}）`,
+      message: resp.data.message,
+      type: 'error',
+    })
+    return null
+  }
+}
+
 export async function createProblem(method: 'post' | 'put', data: AllProblem) {
-  console.log(data)
   const resp = await axios(
     `/problem${method === 'post' ? '' : '/' + data._id}`,
     {

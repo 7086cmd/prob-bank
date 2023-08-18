@@ -1,8 +1,6 @@
 <script setup lang="ts">
 /* global defineProps, defineEmits */
 import { ref, watch, toRefs, onMounted } from 'vue'
-import katex from 'katex'
-import 'katex/contrib/mhchem/mhchem.js'
 import { useStatusStore } from '@/stores/status'
 import { ElPopover, ElInput } from 'element-plus'
 
@@ -22,21 +20,12 @@ const hover = ref(false)
 const formulaIt = ref<InstanceType<typeof HTMLSpanElement>>()
 
 onMounted(() => {
-  renderedString.value = katex.renderToString(modelValue.value.replaceAll('\\mathbb', '\\bold'), {
-    displayMode: false,
-    throwOnError: false,
-    errorColor: '#cc0000',
-  })
-  // console.log(formulaIt.value)
+  renderedString.value = window.probbank.renderKatex(inputedString.value)
 })
 
 watch(inputedString, () => {
   emits('update:modelValue', inputedString.value)
-  renderedString.value = katex.renderToString(inputedString.value.replaceAll('\\mathbb', '\\bold'), {
-    displayMode: false,
-    throwOnError: false,
-    errorColor: '#cc0000',
-  })
+  renderedString.value = window.probbank.renderKatex(inputedString.value)
   // formulaIt.value!.innerHTML = renderedString.value
 })
 </script>

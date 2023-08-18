@@ -12,10 +12,7 @@ if (import.meta.env.DEV) {
 }
 
 if (import.meta.env.PROD) {
-  const href = new URL(window.location.href)
-  href.port = '8080'
-  href.pathname = '/api/v1/'
-  baseUrl = href.toString()
+  baseUrl = 'http://localhost:8080/api/v1/'
 }
 
 const request = axios.create({

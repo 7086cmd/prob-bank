@@ -1,5 +1,12 @@
 import { ipcRenderer, contextBridge } from 'electron'
+import MarkdownIt from 'markdown-it'
 import { ObjectId } from 'mongodb'
+import katex_plug from './katex'
+import katex from 'katex'
+import * as sub from 'markdown-it-sub'
+import * as sup from 'markdown-it-sup'
+import * as mark from 'markdown-it-mark'
+import 'katex/contrib/mhchem/mhchem.js'
 
 contextBridge.exposeInMainWorld('probbank', {
   request(request: {
@@ -42,4 +49,26 @@ contextBridge.exposeInMainWorld('probbank', {
   },
   on: ipcRenderer.on.bind(ipcRenderer),
   send: ipcRenderer.send.bind(ipcRenderer),
+  renderMarkdown(mode: 'inline' | 'block', markdown: string) {
+    const markdownIt = new MarkdownIt({
+      html: true,
+      linkify: true,
+      typographer: true,
+    })
+      .use(sub)
+      .use(sup)
+      .use(mark)
+    if (mode === 'inline') {
+      return markdownIt.renderInline(markdown)
+    } else {
+      return markdownIt.use(katex_plug).render(markdown)
+    }
+  },
+  renderKatex(math: string) {
+    return katex.renderToString(math.replaceAll('\\mathbb', '\\bold'), {
+      displayMode: false,
+      throwOnError: false,
+      errorColor: '#cc0000',
+    })
+  },
 })
