@@ -1,0 +1,14 @@
+{
+  "type": "removable",
+  "_id": "removableid_1",
+  "prompts": [
+    {
+      "type": "text",
+      "content": "What is the name of the first president of the United States?"
+    }
+  ],
+  "problems": [
+    "64b1619170d8dd888ac5a6fb",
+    "64b161b670d8dd888ac5a6fc"
+  ]
+}

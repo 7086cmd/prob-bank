@@ -1,0 +1,71 @@
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('./fonts/Ubuntu-R.ttf');
+}
+
+@font-face {
+  font-family: 'Ubuntu Mono';
+  src: url('./fonts/UbuntuMono-R.ttf');
+}
+
+@font-face {
+  font-family: 'Source Han Sans';
+  src: url('./fonts/SourceHanSansSC-Regular.otf');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Source Han Sans';
+  src: url('./fonts/SourceHanSansSC-Bold.otf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Source Han Serif';
+  src: url('./fonts/SourceHanSerifSC-Regular.otf');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Source Han Serif';
+  src: url('./fonts/SourceHanSerifSC-Bold.otf');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Latin Morden Math';
+  src: url('./fonts/latinmodern-math.otf');
+}
+
+@font-face {
+  font-family: 'Times New Roman';
+  src: url('./Times\ New\ Roman.ttf');
+}
+
+@font-face {
+  font-family: '方正仿宋';
+  src: url('./fonts/FZFSJW.TTF');
+}
+
+@font-face {
+  font-family: '方正楷体';
+  src: url('./fonts/FZKTJW.TTF');
+}
+
+body {
+  font-family: 'Ubuntu', 'Source Han Serif';
+}
+
+.quote {
+  font-family: '方正楷体' !important;
+}
+
+.description {
+  font-family: '方正仿宋';
+}
+
+@media print {
+  body {
+    font-family: 'Ubuntu', 'Source Han Serif';
+  }
+}

@@ -1,0 +1,55 @@
+files:
+  - 'dist/*'
+  - 'dist/**/*'
+  - 'node_modules/**/*'
+extraMetadata:
+  main: dist/prob-bank.min.js
+asar: true
+icon: ./icons/icon.ico
+extends:
+appId: com.wcy.problembank
+copyright: Copyright ©7086cmd 2023-present
+productName: Problem Bank
+win:
+  icon: ./icons/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: Problem Bank
+  menuCategory: ProblemBank
+mac:
+  icon: ./icons/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - arm64
+    - target: zip
+      arch:
+        - arm64
+    - target: pkg
+      arch:
+        - arm64
+        - x64
+dmg:
+  iconSize: 100
+  contents:
+    - x: 85
+      y: 255
+      type: file
+    - x: 325
+      y: 255
+      type: link
+      path: '/Applications'
+  window:
+    width: 800
+    height: 400

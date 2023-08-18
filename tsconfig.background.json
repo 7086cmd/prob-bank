@@ -1,0 +1,13 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["src/app/*.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "lib": ["ESNext"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/app/"]
+    },
+    "allowJs": true
+  }
+}

@@ -1,0 +1,79 @@
+/* @import './base.css'; */
+@import './font.css';
+
+@media print {
+  body {
+    page-break-inside: avoid;
+    page-break-after: avoid;
+    page-break-before: avoid;
+  }
+
+  .print-invisible {
+    /* display: none; */
+  }
+
+  .print-visible {
+    display: block;
+  }
+
+  .divider_top {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  .saparation {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  table {
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+  }
+
+  th {
+    color: #000000 !important;
+    font-weight: bold;
+  }
+
+  td {
+    font-family: 'Ubuntu', 'Source Han Serif';
+    border: 0.3px solid #000000 !important;
+  }
+
+  th {
+    font-family: 'Ubuntu', 'Source Han Sans';
+    border: 0.3px solid #000000 !important;
+  }
+
+  .content {
+    font-family: 'Ubuntu', 'Source Han Serif';
+  }
+
+  .origin {
+    font-family: 'Ubuntu', 'Source Han Sans';
+  }
+
+  .infor {
+    /* display: none !important; */
+  }
+
+  body {
+    font-family: 'Ubuntu', 'Source Han Serif';
+  }
+}
+
+body {
+  line-height: 2;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+th,
+td {
+  color: #000000 !important;
+}
+
+body {
+  font-family: 'Ubuntu', 'Source Han Sans' !important;
+}
