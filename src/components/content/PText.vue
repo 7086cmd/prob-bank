@@ -91,5 +91,7 @@ span {
 <style>
 .markdown-body {
   padding-left: 2rem;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 </style>

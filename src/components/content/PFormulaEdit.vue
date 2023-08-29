@@ -60,7 +60,7 @@ watch(inputedString, () => {
 .katex {
   font-size: v-bind((fontSize) + 'px') !important;
   color: #000000 !important;
-  font-family: 'Latin Morden Math', 'Source Han Serif' !important;
+  /* font-family: 'Latin Morden Math', 'Source Han Serif' !important; */
   margin-bottom: 0 !important;
   word-break: break-all;
 }
