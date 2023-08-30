@@ -32,10 +32,21 @@ export interface BlankContent {
 
 export interface MaterialContent {
   type: 'material'
-  materials: {
+  material: {
+    label: string
     origin?: string
     content: Content[]
-  }[]
+  }
+}
+
+export interface CodeContent {
+  type: 'code'
+  language: string
+  content: string
+}
+
+export interface DividerContent {
+  type: 'divider'
 }
 
 export interface TableCell {
@@ -53,5 +64,7 @@ export type Content =
   | BlankContent
   | TextareaContent
   | MaterialContent
+  | CodeContent
+  | DividerContent
 
 export type Contents = Content[]

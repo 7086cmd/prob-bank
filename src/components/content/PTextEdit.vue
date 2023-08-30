@@ -7,6 +7,7 @@ import { watch, toRefs, ref } from 'vue'
 import MarkdownIt from 'markdown-it'
 import { useStatusStore } from '@/stores/status'
 import { ElPopover, ElInput } from 'element-plus'
+import katex from '@/plugins/katex'
 
 const status = useStatusStore()
 
@@ -14,6 +15,7 @@ const props = defineProps<{
   modelValue: string
   editable: boolean
   prompt?: boolean
+  fontmode?: 'quote'
 }>()
 
 const { modelValue, editable, prompt } = toRefs(props)
@@ -25,7 +27,7 @@ const md = new MarkdownIt({
   html: true,
   breaks: false,
   typographer: true,
-})
+}).use(katex)
 
 const html = ref(md.renderInline(modelValue.value))
 const editorVal = ref(modelValue.value)
@@ -81,5 +83,51 @@ span {
 <style>
 .markdown-body {
   padding-left: 2rem;
+}
+.katex {
+  font-size: v-bind((fontSize) + 'px') !important;
+  color: #000000 !important;
+  /* font-family: 'Latin Morden Math', 'Source Han Serif' !important; */
+  margin-bottom: 0 !important;
+}
+
+.mtight {
+  font-size: v-bind((fontSize - 1) + 'px') !important;
+  zoom: 96% !important;
+}
+
+table {
+  font-size: v-bind((fontSize - 1) + 'px') !important;
+}
+
+table .mtight {
+  font-size: v-bind((fontSize - 2) + 'px') !important;
+  zoom: 84% !important;
+}
+
+@media print {
+  .mtight {
+    zoom: 92% !important;
+  }
+  .formula {
+    color: #000000 !important;
+  }
+}
+
+.frac-line {
+  color: #000000 !important;
+  /* display: none !important; */
+  border: none !important;
+  box-sizing: border-box !important;
+  border-color: #000000 !important;
+  max-height: 2px;
+  /* border-bottom-width: 0.02em !important; */
+}
+
+.frac-line::before,
+.frac-line::after {
+  box-sizing: border-box !important;
+  border-color: #000000 !important;
+  /* border-bottom-width: 0.02em !important; */
 }
 </style>

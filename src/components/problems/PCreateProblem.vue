@@ -28,7 +28,6 @@ import {
 import { useStatusStore } from '@/stores/status'
 import { ref, watch, toRefs } from 'vue'
 import type { Content } from '@/../@types/content'
-import PTextarea from '@/components/forms/PTextarea.vue'
 import { useRouter } from 'vue-router'
 import {
   ArrowLeft,
@@ -49,6 +48,7 @@ import type {
 } from '@/../@types/problem'
 import PImage from '../content/PImage.vue'
 import { postProblem, putProblem } from '@/api'
+import PContentEditor from '../content/PContentEditor.vue'
 
 const status = useStatusStore()
 const router = useRouter()
@@ -468,7 +468,7 @@ function removeSubProblem() {
         :label-position="mode === 'default' ? 'right' : 'top'"
       >
         <ElFormItem label="题干">
-          <PTextarea class="full-width" v-model="modelValue.content" />
+          <PContentEditor class="full-width" v-model="modelValue.content" />
         </ElFormItem>
         <ElFormItem label="图片">
           <ElCard shadow="never" class="full-width">
@@ -547,7 +547,7 @@ function removeSubProblem() {
                 </div>
               </ElCol>
               <ElCol :span="23">
-                <PTextarea class="full-width" v-model="option.content" />
+                <PContentEditor class="full-width" v-model="option.content" />
               </ElCol>
             </ElRow>
           </ElCard>
@@ -556,7 +556,6 @@ function removeSubProblem() {
           <ElRadioGroup
             class="full-width"
             v-model="answerSingle"
-            placeholder="请选择答案"
             border
           >
             <ElRadio
@@ -571,7 +570,6 @@ function removeSubProblem() {
           <ElCheckboxGroup
             class="full-width"
             v-model="answerMulti"
-            placeholder="请选择答案"
             border
           >
             <ElCheckbox
@@ -583,10 +581,10 @@ function removeSubProblem() {
           </ElCheckboxGroup>
         </ElFormItem>
         <ElFormItem v-if="modelValue.type === 'answer'" label="答案">
-          <PTextarea class="full-width" v-model="answerAnswer" />
+          <PContentEditor class="full-width" v-model="answerAnswer" />
         </ElFormItem>
         <ElFormItem label="解答">
-          <PTextarea
+          <PContentEditor
             class="full-width"
             v-model="modelValue.details.procedure"
           />

@@ -1,34 +1,31 @@
 <script lang="ts" setup>
 /* global defineProps */
 import type { MaterialContent } from '@/../@types/content'
-import { ElRow, ElCol } from 'element-plus'
 import PContent from './PContent.vue'
 import { toRefs } from 'vue'
 
 const props = defineProps<{
-  materials: MaterialContent['materials']
+  material: MaterialContent['material']
 }>()
 
-const { materials } = toRefs(props)
-
-const ordlist = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'] // Only support 10 MAX
+const { material } = toRefs(props)
 </script>
 
 <template>
-  <ElRow v-for="(material, idx) in materials" :key="idx">
-    <ElCol :span="3" class="order"
-      >材料{{ materials.length === 1 ? '' : ordlist[idx + 1] }}</ElCol
-    >
-    <ElCol :span="21">
-      <PContent class="material" :content="material.content" />
-      <p v-if="material.origin" class="author">{{ material.origin }}</p>
-    </ElCol>
-  </ElRow>
+  <div class="all pl-8">
+    <!-- eslint-disable-next-line no-irregular-whitespace -->
+    <span class="order">材料{{ material.label }}</span>　
+    <PContent class="material" :content="material.content" prompt />
+    <p v-if="material.origin" class="author">——{{ material.origin }}</p>
+  </div>
 </template>
 
 <style scoped>
+.all {
+  width: 100%;
+}
 .material {
-  font-family: '方正楷体';
+  font-family: '方正楷体' !important;
 }
 
 .order {

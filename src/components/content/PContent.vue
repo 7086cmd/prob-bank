@@ -9,15 +9,17 @@ import PBlank from './PBlank.vue'
 import PTextEdit from './PTextEdit.vue'
 import PFormulaEdit from './PFormulaEdit.vue'
 import PMaterial from './PMaterial.vue'
+import { ElDivider } from 'element-plus'
 
 const props = defineProps<{
   content: Content[]
   editable?: boolean
   answer?: boolean
   prompt?: boolean
+  fontmode?: 'quote'
 }>()
 
-const { content, editable, answer, prompt } = toRefs(props)
+const { content, editable, answer, prompt, fontmode } = toRefs(props)
 
 if (typeof content.value !== 'object') content.value = []
 </script>
@@ -30,6 +32,7 @@ if (typeof content.value !== 'object') content.value = []
       v-model="item.content"
       :editable="editable"
       :answer="answer"
+      :fontmode="fontmode"
     />
     <PText
       v-else-if="item.type === 'textarea'"
@@ -47,9 +50,14 @@ if (typeof content.value !== 'object') content.value = []
     <PTable v-else-if="item.type === 'table'" :content="item.content" />
     <!-- eslint-disable-next-line no-irregular-whitespace -->
     <PBlank v-else-if="item.type === 'blank'" :content="item" />
-    <PMaterial
-      v-else-if="item.type === 'material'"
-      :materials="item.materials"
-    />
+    <PMaterial v-else-if="item.type === 'material'" :material="item.material" />
+    <ElDivider v-else-if="item.type === 'divider'" />
   </span>
 </template>
+
+<style>
+.quote {
+  font-family: '方正楷体';
+  font-size: 16px !important;
+}
+</style>
