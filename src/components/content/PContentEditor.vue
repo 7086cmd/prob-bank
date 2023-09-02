@@ -17,12 +17,12 @@ import {
   ElSpace,
   ElTooltip,
   ElDivider,
+  ElButtonGroup,
 } from 'element-plus'
 import {
   Code,
   ParagraphAlphabet,
   Text,
-  Inline,
   Pic,
   InsertTable,
   Material,
@@ -32,104 +32,12 @@ import {
 } from '@icon-park/vue-next'
 import { toRefs, type Component, watch, ref } from 'vue'
 import type { TableContent } from '@/../@types/content'
-import type { FormulaContent } from '@/../@types/content'
-import { Delete } from '@element-plus/icons-vue'
+import { Delete, SortUp, SortDown } from '@element-plus/icons-vue'
 import PParagraph from './PParagraph.vue'
 import PImg from './PImg.vue'
 import PMaterialEdit from './PMaterialEdit.vue'
 import PContent from './PContent.vue'
-
-function transformTo(ctn: Content[]) {
-  // The General "Content" splits `text`, `formula` and `blank` content. So we need to transform it to the specific content.
-  // Usual: Merge `text`, `formula`, and `blank`
-  return ctn
-    .map((content) => {
-      if (content.type === 'formula') {
-        return {
-          type: 'text',
-          content: `$${content.content}$`,
-        } as TextContent
-      } else if (content.type === 'blank') {
-        return {
-          type: 'text',
-          content: `!blank([${content.answer
-            .map((x) => {
-              if (x.type === 'text') return x.content
-              else if (x.type === 'formula') return `$${x.content}$`
-              else return
-            })
-            .join('')}])`,
-        } as TextContent
-      } else return content
-    })
-    .reduce((base, elm) => {
-      if (base.length === 0) {
-        base.push(elm)
-        return base
-      } else {
-        const last = base[base.length - 1]
-        if (last.type === 'text' && elm.type === 'text') {
-          last.content += elm.content
-          return base
-        } else {
-          base.push(elm)
-          return base
-        }
-      }
-    }, [] as Content[])
-}
-
-function transformFrom(ctn: Content[]) {
-  function transformText(ctn: TextContent) {
-    return ctn.content
-      .split('$')
-      .filter((x) => x)
-      .map((x, i) => ({
-        type: i % 2 === 0 ? 'text' : 'formula',
-        content: x,
-      })) as Content[]
-  }
-  function transformBlank(ctn: TextContent) {
-    if (!ctn.content.includes('!blank([')) return transformText(ctn)
-    const blanks = ctn.content.split('!blank([')
-    const result = blanks.reduce((prev, cur, ix) => {
-      if (ix === 0) {
-        prev.push(
-          ...transformText({
-            type: 'text',
-            content: cur,
-          })
-        )
-      } else {
-        const answer = cur.split('])')[0]
-        const text = cur.split('])').slice(1).join('])')
-        prev.push({
-          type: 'blank',
-          answer: transformText({
-            type: 'text',
-            content: answer,
-          }),
-        })
-        prev.push(
-          ...transformText({
-            type: 'text',
-            content: text,
-          })
-        )
-      }
-      return prev
-    }, [] as Content[])
-    return result
-  }
-  return ctn.reduce((prev, cur) => {
-    if (cur.type === 'text') {
-      prev.push(...transformBlank(cur))
-    } else {
-      prev.push(cur)
-    }
-    return prev
-  }, [] as Content[])
-}
+import { transformTo, transformFrom } from './transformer'
 
 const props = defineProps<{
   modelValue: Content[]
@@ -154,6 +62,8 @@ const contentTypes = [
       content: '',
     } as TextContent,
     type: 'success',
+    description:
+      '最朴素的文字，使用 Markdown 的 renderInline，不支持标题等格式，添加空格支持。',
   },
   {
     name: '图片',
@@ -164,16 +74,8 @@ const contentTypes = [
       alt: '',
     } as ImageContent,
     type: 'primary',
-  },
-  {
-    name: '段落',
-    icon: ParagraphAlphabet,
-    base: {
-      type: 'textarea',
-      content: '',
-    } as TextareaContent,
-    type: 'warning',
-    disabled: disables?.value?.includes('textarea'),
+    description:
+      '图片，支持上传图片，支持自动排版，如果长宽比大于 2.5 则居中，否则居右。最大为 20KiB。',
   },
   {
     name: '材料',
@@ -188,6 +90,7 @@ const contentTypes = [
     } as MaterialContent,
     type: 'danger',
     disabled: disables?.value?.includes('material'),
+    description: '文科题目常见的“材料一”类材料，具有自动排版功能。',
   },
   {
     name: '代码',
@@ -199,6 +102,7 @@ const contentTypes = [
     } as CodeContent,
     type: 'primary',
     disabled: disables?.value?.includes('code'),
+    description: '代码，支持语言高亮。正在开发，计划加入 Monaco Editor。',
   },
   {
     name: '分割线',
@@ -207,16 +111,7 @@ const contentTypes = [
       type: 'divider',
     } as DividerContent,
     type: 'info',
-  },
-  {
-    name: '公式',
-    icon: Inline,
-    base: {
-      type: 'formula',
-      content: '',
-    } as FormulaContent,
-    disabled: true,
-    type: 'warning',
+    description: '分割线，最朴素的分割线。',
   },
   {
     name: '表格',
@@ -227,6 +122,20 @@ const contentTypes = [
     } as TableContent,
     disabled: true,
     type: 'info',
+    description:
+      '表格，不是 Markdown 格式的表格，支持合并单元格等复杂操作，目前正在开发。',
+  },
+  {
+    name: '段落',
+    icon: ParagraphAlphabet,
+    base: {
+      type: 'textarea',
+      content: '',
+    } as TextareaContent,
+    type: 'warning',
+    disabled: disables?.value?.includes('textarea'),
+    description:
+      '（Markdown 支持），支持 Markdown 基本语法，支持公式，暂不支持 PlantUML 和 Mermaid。',
   },
 ] as Array<{
   name: string
@@ -234,6 +143,7 @@ const contentTypes = [
   base: Content
   disabled?: boolean
   type: 'primary' | 'success' | 'warning' | 'danger' | 'info'
+  description?: string
 }>
 
 const contents = ref(transformTo(modelValue.value))
@@ -270,7 +180,7 @@ const preview = ref(false)
         </ElCol>
         <ElCol :span="16" style="text-align: right">
           <ElSpace>
-            <ElSpace v-if="!preview">
+            <ElButtonGroup v-if="!preview">
               <ElTooltip
                 v-for="(btn, idx) in contentTypes"
                 :key="btn.name"
@@ -286,16 +196,14 @@ const preview = ref(false)
                   text
                   bg
                   circle
-                  size="small"
                 />
               </ElTooltip>
-            </ElSpace>
-            <ElDivider v-if="!preview" direction="vertical" />
+            </ElButtonGroup>
+            <ElDivider direction="vertical" v-if="!preview" />
             <ElButton
               text
               bg
               circle
-              size="small"
               :type="preview ? 'success' : 'danger'"
               :icon="preview ? PreviewClose : PreviewOpen"
               @click="preview = !preview"
@@ -313,24 +221,54 @@ const preview = ref(false)
           <ElSpace>
             <ElButton
               text
-              bg
               circle
+              bg
               type="danger"
               :icon="Delete"
               @click="deleteElement(idx)"
             />
-            <ElButton
-              text
-              round
-              :type="
-                contentTypes.find((x) => x.base.type === content.type)?.type
-              "
-              :icon="
-                contentTypes.find((x) => x.base.type === content.type)?.icon
-              "
-            >
-              {{ contentTypes.find((x) => x.base.type === content.type)?.name }}
-            </ElButton>
+            <ElDivider direction="vertical" />
+            <ElButtonGroup>
+              <ElButton
+                text
+                circle
+                bg
+                :type="idx === 0 ? 'danger' : 'primary'"
+                :icon="SortUp"
+              />
+              <ElTooltip
+                :content="
+                  contentTypes.find((x) => x.base.type === content.type)
+                    ?.description
+                "
+                effect="light"
+                placement="top"
+                trigger="click"
+              >
+                <ElButton
+                  text
+                  round
+                  bg
+                  :type="
+                    contentTypes.find((x) => x.base.type === content.type)?.type
+                  "
+                  :icon="
+                    contentTypes.find((x) => x.base.type === content.type)?.icon
+                  "
+                >
+                  {{
+                    contentTypes.find((x) => x.base.type === content.type)?.name
+                  }}
+                </ElButton>
+              </ElTooltip>
+              <ElButton
+                text
+                circle
+                bg
+                :type="idx === contents.length - 1 ? 'danger' : 'primary'"
+                :icon="SortDown"
+              />
+            </ElButtonGroup>
           </ElSpace>
           <div class="py-1">
             <PParagraph

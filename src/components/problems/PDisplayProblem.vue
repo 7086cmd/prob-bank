@@ -14,9 +14,10 @@ const props = defineProps<{
   mode: 'display' | 'page'
   order: number
   paper?: boolean
+  groupPreview: boolean
 }>()
 
-const { _id, mode, order, paper } = toRefs(props)
+const { _id, mode, order, paper, groupPreview } = toRefs(props)
 
 const problem = ref<AllProblem | null>(null)
 const loaded = ref(false)
@@ -58,8 +59,9 @@ getProblem(_id.value)
           :order="order"
           :level="0"
           :_id="_id"
-          @dblclick="router.push(`/problem/display/${_id}`)"
+          @dblclick="groupPreview ? router.push(`/problem/display/${_id}`) : undefined"
           :in-paper="paper"
+          :group-preview="groupPreview"
         />
       </div>
     </transition>

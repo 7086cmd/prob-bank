@@ -4,7 +4,7 @@ import { MongoClient, ObjectId } from 'mongodb'
 import { log } from '../log'
 
 export async function getProblem(id: string) {
-  const url = 'mongodb://localhost:27017'
+  const url = 'mongodb://127.0.0.1:27017'
   const client = new MongoClient(url)
   await client.connect()
   const db = client.db('prob-bank')
@@ -20,7 +20,7 @@ export async function getProblem(id: string) {
 }
 
 export async function getProblems() {
-  const url = 'mongodb://localhost:27017'
+  const url = 'mongodb://127.0.0.1:27017'
   const client = new MongoClient(url)
   await client.connect()
   const db = client.db('prob-bank')
@@ -48,7 +48,7 @@ export async function getProblemList(filter: {
   )[]
   type: ('single-choice' | 'multiple-choice' | 'blank' | 'answer')[]
 }) {
-  const url = 'mongodb://localhost:27017'
+  const url = 'mongodb://127.0.0.1:27017'
   const client = new MongoClient(url)
   await client.connect()
   const db = client.db('prob-bank')
@@ -66,7 +66,7 @@ export async function getProblemList(filter: {
 
 export async function modifyProblem(problem: AllProblem) {
   if (await getProblem(problem._id)) {
-    const url = 'mongodb://localhost:27017'
+    const url = 'mongodb://127.0.0.1:27017'
     const client = new MongoClient(url)
     await client.connect()
     const db = client.db('prob-bank')
@@ -85,7 +85,7 @@ export async function modifyProblem(problem: AllProblem) {
     client.close()
     return { _id: problem._id, statusCode: 200 }
   } else {
-    const url = 'mongodb://localhost:27017'
+    const url = 'mongodb://127.0.0.1:27017'
     const client = new MongoClient(url)
     await client.connect()
     const db = client.db('prob-bank')
@@ -102,7 +102,7 @@ export async function modifyProblem(problem: AllProblem) {
 }
 
 export async function deleteProblem(id: string) {
-  const url = 'mongodb://localhost:27017'
+  const url = 'mongodb://127.0.0.1:27017'
   const client = new MongoClient(url)
   await client.connect()
   const db = client.db('prob-bank')

@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { MongoClient, ObjectId } from 'mongodb'
 
 export async function getProblemGroup(id: string) {
-  const url = 'mongodb://localhost:27017'
+  const url = 'mongodb://127.0.0.1:27017'
   const client = new MongoClient(url)
   await client.connect()
   const db = client.db('prob-bank')
@@ -36,7 +36,7 @@ export async function getProblemGroupList(filter: {
   )[]
   type: ('removable' | 'unremovable')[]
 }) {
-  const url = 'mongodb://localhost:27017'
+  const url = 'mongodb://127.0.0.1:27017'
   const client = new MongoClient(url)
   await client.connect()
   const db = client.db('prob-bank')
@@ -58,7 +58,7 @@ export async function modifyProblemGroup(problemGroup: ProblemGroup) {
     ObjectId.isValid(problemGroup._id) &&
     (await getProblemGroup(problemGroup._id))
   ) {
-    const url = 'mongodb://localhost:27017'
+    const url = 'mongodb://127.0.0.1:27017'
     const client = new MongoClient(url)
     await client.connect()
     const db = client.db('prob-bank')
@@ -76,7 +76,7 @@ export async function modifyProblemGroup(problemGroup: ProblemGroup) {
     client.close()
     return { _id: problemGroup._id, statusCode: 200 }
   } else {
-    const url = 'mongodb://localhost:27017'
+    const url = 'mongodb://127.0.0.1:27017'
     const client = new MongoClient(url)
     await client.connect()
     const db = client.db('prob-bank')
@@ -93,7 +93,7 @@ export async function modifyProblemGroup(problemGroup: ProblemGroup) {
 }
 
 export async function deleteProblemGroup(id: string) {
-  const url = 'mongodb://localhost:27017'
+  const url = 'mongodb://127.0.0.1:27017'
   const client = new MongoClient(url)
   await client.connect()
   const db = client.db('prob-bank')

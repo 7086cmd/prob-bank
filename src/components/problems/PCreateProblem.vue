@@ -19,11 +19,9 @@ import {
   ElRow,
   ElCol,
   ElCard,
-  ElUpload,
   ElDivider,
   ElNotification,
   ElDrawer,
-  type UploadUserFile,
 } from 'element-plus'
 import { useStatusStore } from '@/stores/status'
 import { ref, watch, toRefs } from 'vue'
@@ -46,7 +44,6 @@ import type {
   ChoiceProblem,
   AnswerProblem,
 } from '@/../@types/problem'
-import PImage from '../content/PImage.vue'
 import { postProblem, putProblem } from '@/api'
 import PContentEditor from '../content/PContentEditor.vue'
 
@@ -68,26 +65,6 @@ const options = ref<{ id: number; content: Content[] }[]>([])
 const answerSingle = ref<string>('')
 const answerMulti = ref<string[]>([])
 const answerAnswer = ref<Content[]>([])
-const fileList = ref<UploadUserFile[]>([])
-
-watch(
-  () => fileList.value,
-  () => {
-    if (fileList.value.length === 0) return
-
-    const file = fileList.value[0].raw as File
-
-    const reader = new FileReader()
-
-    reader.readAsDataURL(file)
-
-    reader.onload = () => {
-      const base64 = reader.result as string
-      modelValue.value.image = base64
-    }
-  }
-)
-
 watch(
   () => answerAnswer.value,
   () => {
@@ -115,13 +92,6 @@ watch(
   options.value,
   () => ((modelValue.value as ChoiceProblem).options = options.value)
 )
-
-watch(modelValue.value, () => {
-  emits('update: modelValue', modelValue.value)
-  if (modelValue.value.image === '') {
-    fileList.value = []
-  }
-})
 
 watch(modelValue.value.subProblems, () => {
   emits('update: modelValue', modelValue.value)
@@ -469,52 +439,6 @@ function removeSubProblem() {
       >
         <ElFormItem label="题干">
           <PContentEditor class="full-width" v-model="modelValue.content" />
-        </ElFormItem>
-        <ElFormItem label="图片">
-          <ElCard shadow="never" class="full-width">
-            <ElRow>
-              <ElCol :span="12" class="upload">
-                <ElUpload
-                  class="full-width"
-                  v-if="!modelValue.image"
-                  ref="uploadRef"
-                  :auto-upload="false"
-                  :limit="1"
-                  action="#"
-                  v-model:file-list="fileList"
-                  :disabled="fileList.length > 1"
-                >
-                  <template #trigger>
-                    <ElButton
-                      circle
-                      text
-                      bg
-                      size="large"
-                      type="primary"
-                      :icon="Upload"
-                    />
-                  </template>
-                </ElUpload>
-                <ElButton
-                  v-else
-                  circle
-                  text
-                  bg
-                  size="large"
-                  type="warning"
-                  :icon="Delete"
-                  @click="modelValue.image = ''"
-                />
-              </ElCol>
-              <ElCol :span="12" class="preview">
-                <PImage
-                  v-if="modelValue.image"
-                  :src="modelValue.image"
-                  alt="preview"
-                />
-              </ElCol>
-            </ElRow>
-          </ElCard>
         </ElFormItem>
         <ElFormItem v-if="modelValue.type.includes('choice')" label="选项">
           <ElCard shadow="never" class="full-width">

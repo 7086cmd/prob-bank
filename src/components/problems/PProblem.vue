@@ -66,9 +66,10 @@ const props = defineProps<{
   _id?: string
   inPaper?: boolean
   preview?: boolean
+  groupPreview?: boolean
 }>()
 
-const { problem, mode, order, level, _id, inPaper, preview } = toRefs(props)
+const { problem, mode, order, level, _id, inPaper, preview, groupPreview } = toRefs(props)
 const valid = ref(false)
 const groupinform = ref<Content[]>([])
 
@@ -203,7 +204,7 @@ const answer = ref((inPaper.value || mode.value === 'page') ? md2c(getAnswer(pro
           enter-active-class="animate__animated animate__fadeInDown"
           appear
         >
-          <div v-if="valid" style="text-align: right">
+          <div v-if="valid && !groupPreview" style="text-align: right">
             <ElDivider />
             <ElSpace>
               <ElButton

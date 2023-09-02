@@ -72,23 +72,23 @@ const preview = ref(false)
 <template>
   <ElCard shadow="hover">
     <ElForm>
-      <ElFormItem label="预览">
+      <ElFormItem label="预览" class="py-2">
         <ElSwitch v-model="preview" />
         <ElCard shadow="hover" v-if="preview" style="width: 100%">
           <PMaterial :material="mat.material" />
         </ElCard>
       </ElFormItem>
-      <ElFormItem label="来源" v-if="!preview">
+      <ElFormItem label="来源" v-if="!preview" class="py-2">
         <ElInput v-model="orig" />
       </ElFormItem>
-      <ElFormItem label="序列" v-if="!preview">
+      <ElFormItem label="序列" v-if="!preview" class="py-2">
         <ElInput v-model="lab">
           <template #prepend>
             <span>材料</span>
           </template>
         </ElInput>
       </ElFormItem>
-      <ElFormItem label="内容" v-if="!preview">
+      <ElFormItem label="内容" v-if="!preview" class="py-2">
         <PContentEditor v-model="ctn" :disables="['material', 'formula']" />
       </ElFormItem>
     </ElForm>

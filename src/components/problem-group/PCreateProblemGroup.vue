@@ -2,7 +2,7 @@
 /* global defineProps, defineEmits */
 import { ref, toRefs, watch } from 'vue'
 import type { ProblemGroup } from '@/../@types/problem-group'
-import PTextarea from '../forms/PTextarea.vue'
+import PContentEditor from '../content/PContentEditor.vue'
 import {
   ElButton,
   ElCard,
@@ -235,7 +235,7 @@ const gardes = [
           </ElInput>
         </ElFormItem>
         <ElFormItem label="信息描述">
-          <PTextarea v-model="modelValue.prompts" class="full-width" prompt />
+          <PContentEditor v-model="modelValue.prompts" class="full-width" prompt />
         </ElFormItem>
         <Transition
           enter-active-class="animate__animated animate__fadeIn"
@@ -301,6 +301,8 @@ const gardes = [
                 :_id="problem.problem._id"
                 :order="idx + 1"
                 mode="display"
+                group-preview
+                @dblclick="problem.open = true"
               />
               <ElDrawer
                 v-else
