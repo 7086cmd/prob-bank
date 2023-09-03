@@ -8,6 +8,8 @@ if (import.meta.env.DEV) {
   const href = new URL(window.location.href)
   href.port = '8080'
   href.pathname = '/api/v1/'
+  href.searchParams.delete('id')
+  href.searchParams.delete('mode')
   baseUrl = href.toString()
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /* global defineProps */
 import type { AllProblem } from '@/../@types/problem'
-import { toRefs, ref } from 'vue'
+import { toRefs, ref, unref } from 'vue'
 import PProblem from './PProblem.vue'
 import { ElResult, ElSkeleton, ElCard } from 'element-plus'
 import { useRouter } from 'vue-router'
@@ -19,11 +19,14 @@ const props = defineProps<{
 
 const { _id, mode, order, paper, groupPreview } = toRefs(props)
 
+console.log(unref(_id), unref(groupPreview))
+
 const problem = ref<AllProblem | null>(null)
 const loaded = ref(false)
 const error = ref(false)
 const errText = ref('')
 const statusCode = ref(200)
+const d = ref({})
 
 getProblem(_id.value)
   .then((response) => {
@@ -31,8 +34,10 @@ getProblem(_id.value)
     problem.value = response as AllProblem
   })
   .catch((err) => {
+    console.log(err)
     error.value = true
     loaded.value = true
+    d.value = err
     errText.value = err.response.data.message
     statusCode.value = err.response.data.code
   })

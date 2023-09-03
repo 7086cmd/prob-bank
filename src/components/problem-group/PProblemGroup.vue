@@ -29,7 +29,6 @@ import {
   SortDown,
   Close,
 } from '@element-plus/icons-vue'
-import type { AllProblem } from '@/../@types/problem'
 import { deleteProblemGroup } from '@/api'
 
 const status = useStatusStore()
@@ -44,21 +43,13 @@ const props = defineProps<{
 }>()
 
 const { group, order, mode, inPaper } = toRefs(props)
+const { fontSize } = toRefs(status)
 
 const _id = group.value._id
 
 const valid = ref(false)
 
 if (window.probbank.validObjectId(_id)) valid.value = true
-
-// if (group.value.type === 'removable') {
-//   group.value.prompts.push({
-//     type: 'text',
-//     content: `据此回答第${order.value}至${
-//       order.value + group.value.problems.length
-//     }题．`,
-//   })
-// }
 
 function createProblemGroupDownloader(_id: string) {
   const loader = ElLoading.service({
@@ -109,12 +100,27 @@ function handle() {
 <template>
   <div class="pt-4">
     <transition
-      v-if="mode === 'display'"
+      v-if="mode === 'display' && status.type === 'preview'"
       enter-active-class="animate__animated animate__fadeIn"
       appear
     >
       <ElCard shadow="hover">
-        <PContent :content="group.prompts" prompt />
+        <span class="description" v-if="group.data.origin">
+          （{{ group.data.origin }}）
+        </span>
+        <PContent
+          :content="[
+            {
+              type: 'text',
+              content: `根据材料，回答第${order}至${
+                order + group.problems.length - 1
+              }题。`,
+            },
+          ]"
+        />
+        <br />
+        <!-- eslint-disable-next-line no-irregular-whitespace -->
+        <span>　　</span><PContent :content="group.prompts" prompt />
         <div v-if="group.type === 'removable'">
           <PDisplayProblem
             v-for="(prob, index) in group.problems"
@@ -217,7 +223,7 @@ function handle() {
         </transition>
       </ElCard>
     </transition>
-    <transition v-else-if="mode === 'page'">
+    <transition v-else-if="mode === 'page' && status.type === 'preview'">
       <div>
         <div
           v-if="status.type === 'preview'"
@@ -290,12 +296,46 @@ function handle() {
               :order="order + index"
               :level="0"
               :mode="mode"
-              :problem="prob as AllProblem"
+              :problem="prob"
               :_id="prob._id"
             />
           </div>
         </div>
       </div>
     </transition>
+    <div v-else-if="status.type === 'print'">
+      <span class="description" v-if="group.data.origin">
+        （{{ group.data.origin }}）
+      </span>
+      <PContent :content="group.prompts" prompt />
+      <div v-if="group.type === 'removable'">
+        <PDisplayProblem
+          v-for="(prob, index) in group.problems"
+          :key="prob"
+          :order="order + index"
+          :level="0"
+          mode="display"
+          :_id="prob"
+        />
+      </div>
+      <div v-else-if="group.type === 'unremovable'">
+        <PProblem
+          v-for="(prob, index) in group.problems"
+          :key="prob._id"
+          :order="order + index"
+          :level="0"
+          :mode="mode"
+          :problem="prob"
+          :_id="prob._id"
+        />
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.description {
+  font-family: '方正仿宋' !important;
+  font-size: v-bind((fontSize + 1) + 'px');
+}
+</style>

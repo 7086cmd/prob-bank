@@ -44,6 +44,7 @@ import { getGradeSubjectName } from '@/utils/subject'
 import Clipboard from 'clipboard'
 import { deleteProblem } from '@/api'
 import { md2c } from '@/utils/md2c'
+import { getProblemGroup } from '@/api'
 
 const paper = usePaperStore()
 const status = useStatusStore()
@@ -69,7 +70,8 @@ const props = defineProps<{
   groupPreview?: boolean
 }>()
 
-const { problem, mode, order, level, _id, inPaper, preview, groupPreview } = toRefs(props)
+const { problem, mode, order, level, _id, inPaper, preview, groupPreview } =
+  toRefs(props)
 const valid = ref(false)
 const groupinform = ref<Content[]>([])
 
@@ -125,21 +127,11 @@ function createProblemDownloader(_id: string) {
 
 function inGroup() {
   if (problem.value.inGroup) {
-    window.probbank
-      .request({
-        pathname: 'problem-group',
-        method: 'get',
-        request: {
-          params: {
-            _id: problem.value.inGroup,
-          },
-        },
-      })
-      .then((resp) => {
-        if (resp.status === 'success') {
-          groupinform.value = (resp.data as ProblemGroup).prompts
-        }
-      })
+    getProblemGroup(problem.value.inGroup).then((resp) => {
+      if (resp) {
+        groupinform.value = (resp as ProblemGroup).prompts
+      }
+    })
   }
 }
 
@@ -162,7 +154,9 @@ function handle(_id: string) {
   else set(_id)
 }
 
-const answer = ref((inPaper.value || mode.value === 'page') ? md2c(getAnswer(problem.value)) : '')
+const answer = ref(
+  inPaper.value || mode.value === 'page' ? md2c(getAnswer(problem.value)) : ''
+)
 </script>
 
 <template>
