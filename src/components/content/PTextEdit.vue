@@ -1,24 +1,23 @@
 <script setup lang="ts">
-/* global defineProps, defineEmits */
-
-// 即日起，不支持 Textarea
-
 import { watch, toRefs, ref } from 'vue'
 import MarkdownIt from 'markdown-it'
 import { useStatusStore } from '@/stores/status'
-import { ElPopover, ElInput } from 'element-plus'
 import katex from '@/plugins/katex'
 
 const status = useStatusStore()
 
 const props = defineProps<{
   modelValue: string
-  editable: boolean
   prompt?: boolean
-  fontmode?: 'quote'
+  english?: boolean
+  italic?: boolean
+  title?: boolean
+  origin?: boolean
+  science?: boolean
 }>()
 
-const { modelValue, editable, prompt } = toRefs(props)
+const { modelValue, prompt, english, italic, title, origin, science } =
+  toRefs(props)
 const { fontSize } = toRefs(status)
 
 const emits = defineEmits(['update:modelValue'])
@@ -29,54 +28,74 @@ const md = new MarkdownIt({
   typographer: true,
 }).use(katex)
 
-const html = ref(md.renderInline(modelValue.value))
+const html = ref(
+  md.renderInline(
+    modelValue.value.replaceAll('。', science.value ? '。' : '．')
+  )
+)
 const editorVal = ref(modelValue.value)
-const hover = ref(false)
 
 watch(editorVal, () => {
-  html.value = md.renderInline(editorVal.value)
-  emits('update:modelValue', editorVal.value)
+  html.value = md.renderInline(
+    editorVal.value.replaceAll('。', science.value ? '。' : '．')
+  )
+  emits(
+    'update:modelValue',
+    editorVal.value.replaceAll('。', science.value ? '。' : '．')
+  )
 })
 </script>
 
 <template>
-  <ElPopover trigger="click" v-if="editable">
-    <template #reference>
-      <span
-        :style="`background-color: ${
-          hover ? '#e6f7ff' : '#ffffff'
-        }; font-size: ${fontSize}px !important`"
-        v-if="html !== ''"
-        v-html="html"
-        @mouseover="hover = true"
-        @mouseleave="hover = false"
-      />
-      <span v-else @mouseover="hover = true" @mouseleave="hover = false">
-        点我编辑内容
-      </span>
-    </template>
-    <ElInput v-model="editorVal" />
-  </ElPopover>
-  <span :style="`font-size: ${fontSize}px !important`" v-else v-html="html" :class="prompt ? 'quote' : ''" />
+  <span
+    :style="{
+      fontStyle: italic ? 'italic' : '',
+      textAlign: italic ? 'center' : 'left',
+    }"
+  >
+    <span v-if="english" class="english" v-html="html" />
+    <span v-else-if="prompt" class="quote" v-html="html" />
+    <span v-else-if="title" class="title" v-html="html" />
+    <span v-else-if="origin" class="origin" v-html="html" />
+    <span v-else class="normal" v-html="html" />
+  </span>
 </template>
 
 <style scoped>
-span {
+.normal {
   font-family: 'Source Han Serif' !important;
   font-size: v-bind(fontSize + 'px');
   word-break: break-all;
 }
 
+.english {
+  font-family: 'Times New Roman', 'Source Han Serif' !important;
+  font-size: v-bind((fontSize) + 'px');
+  word-break: keep-all;
+}
+
 @media print {
   span {
-    font-family: 'Times New Roman', 'Source Han Serif' !important;
     color: #000000 !important;
   }
 }
 
 .quote {
   font-family: '方正楷体' !important;
-  font-size: v-bind((fontSize + 2) + 'px');
+  font-size: v-bind((fontSize) + 'px');
+  word-break: break-all;
+}
+
+.origin {
+  font-family: '方正仿宋' !important;
+  font-size: v-bind((fontSize) + 'px');
+  word-break: break-all;
+}
+
+.title {
+  font-family: 'Source Han Sans' !important;
+  font-size: v-bind(fontSize + 'px');
+  word-break: break-all;
 }
 </style>
 

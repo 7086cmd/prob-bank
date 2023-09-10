@@ -1,4 +1,5 @@
 import { Content } from './content'
+import { Wrong } from './wronged'
 
 export interface Problem {
   _id: string // 由MongoDB自动生成
@@ -37,6 +38,7 @@ export interface Problem {
     problem: AllProblem
   }[] // 子题目
   inGroup: string // 若不属于题组则空，若属于题组则为题组的 _id
+  wrong?: Wrong
 }
 
 export interface SingleChoiceProblem extends Problem {
@@ -55,6 +57,11 @@ export interface BlankProblem extends Problem {
   type: 'blank'
 }
 
+export interface JudgeProblem extends Problem {
+  type: 'judge'
+  answer: boolean
+}
+
 export interface AnswerProblem extends Problem {
   type: 'answer'
   answer: Content[] // 答案
@@ -67,3 +74,4 @@ export type AllProblem =
   | MultipleChoiceProblem
   | BlankProblem
   | AnswerProblem
+  | JudgeProblem

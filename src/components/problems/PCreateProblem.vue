@@ -9,9 +9,6 @@ import {
   ElOption,
   ElRadioButton,
   ElRadioGroup,
-  ElRadio,
-  ElCheckbox,
-  ElCheckboxGroup,
   ElInput,
   ElSteps,
   ElStep,
@@ -39,13 +36,12 @@ import { Notes, WritingFluently, Save } from '@icon-park/vue-next'
 import PProblem from '@/components/problems/PProblem.vue'
 import type {
   AllProblem,
-  MultipleChoiceProblem,
-  SingleChoiceProblem,
-  ChoiceProblem,
-  AnswerProblem,
+  Problem,
 } from '@/../@types/problem'
 import { postProblem, putProblem } from '@/api'
 import PContentEditor from '../content/PContentEditor.vue'
+import { wrongTypes } from './wrong'
+import POptionEdit from './POptionEdit.vue'
 
 const status = useStatusStore()
 const router = useRouter()
@@ -59,39 +55,11 @@ const props = defineProps<{
 
 const { modelValue, level, mode } = toRefs(props)
 
+console.log(modelValue.value)
+
 if (mode?.value) mode.value = 'default'
 
 const options = ref<{ id: number; content: Content[] }[]>([])
-const answerSingle = ref<string>('')
-const answerMulti = ref<string[]>([])
-const answerAnswer = ref<Content[]>([])
-watch(
-  () => answerAnswer.value,
-  () => {
-    if (!modelValue.value) return
-    ;(modelValue.value as AnswerProblem).answer = answerAnswer.value
-  }
-)
-
-watch(
-  answerSingle,
-  () =>
-    ((modelValue.value as SingleChoiceProblem).answer =
-      answerSingle.value.charCodeAt(0) - 65)
-)
-
-watch(
-  answerMulti,
-  () =>
-    ((modelValue.value as MultipleChoiceProblem).answer = answerMulti.value.map(
-      (x) => x.charCodeAt(0) - 65
-    ))
-)
-
-watch(
-  options.value,
-  () => ((modelValue.value as ChoiceProblem).options = options.value)
-)
 
 watch(modelValue.value.subProblems, () => {
   emits('update: modelValue', modelValue.value)
@@ -100,6 +68,10 @@ watch(modelValue.value.subProblems, () => {
 const step = ref(0)
 
 const modelValueTypeOptions = ref([
+  {
+    label: '判断题',
+    value: 'judge',
+  },
   {
     label: '单项选择题',
     value: 'single-choice',
@@ -205,19 +177,16 @@ function createBlankProblem(
   key: number,
   type: AllProblem['type'] = 'single-choice'
 ) {
-  let ansT: number | Content[] | undefined = 0
+  let ansT: number | number[] | boolean | Content[] | undefined = 0
   switch (type) {
     case 'single-choice':
       ansT = 0
       break
-    case 'multiple-choice':
-      ansT = []
+    case 'judge':
+      ansT = false
       break
     case 'blank':
       ansT = undefined
-      break
-    case 'answer':
-      ansT = []
       break
     default:
       ansT = []
@@ -246,62 +215,43 @@ function createBlankProblem(
       subject: modelValue.value.data.subject,
       origin: modelValue.value.data.origin,
     },
-  }
+    wrong: {
+      type: '',
+      reason: [],
+      lesson: [],
+    },
+    inGroup: modelValue.value.inGroup,
+  } as Problem
   return result
 }
 
 watch(
   () => modelValue.value.type,
   () => {
-    if (!modelValue.value.answer)
-      switch (modelValue.value.type) {
-        case 'single-choice': {
-          modelValue.value.answer = 0
-          break
-        }
-        case 'answer': {
-          modelValue.value.answer = []
-          break
-        }
-        case 'multiple-choice': {
-          modelValue.value.answer = []
-          break
-        }
-        default:
-          break
+    switch (modelValue.value.type) {
+      case 'single-choice': {
+        modelValue.value.answer = 0
+        break
       }
+      case 'answer': {
+        modelValue.value.answer = []
+        break
+      }
+      case 'multiple-choice': {
+        modelValue.value.answer = []
+        break
+      }
+      case 'judge': {
+        modelValue.value.answer = false
+        break
+      }
+      default:
+        break
+    }
   }
 )
 
 watch(step, () => {
-  if (
-    modelValue.value.type === 'single-choice' &&
-    modelValue.value.options?.filter((x) => x.content.length !== 0).length !== 0
-  ) {
-    if (modelValue.value.answer)
-      answerSingle.value = String.fromCharCode(
-        (modelValue.value as SingleChoiceProblem).answer + 65
-      )
-  } else if (
-    modelValue.value.type === 'multiple-choice' &&
-    modelValue.value.options?.filter((x) => x.content.length !== 0).length !== 0
-  ) {
-    if (modelValue.value.answer)
-      answerMulti.value = (
-        modelValue.value as MultipleChoiceProblem
-      ).answer.map((x) => String.fromCharCode(x + 65))
-  } else if (
-    modelValue.value.type === 'answer' &&
-    modelValue.value.answer.length !== 0
-  ) {
-    answerAnswer.value = modelValue.value.answer
-  }
-
-  if (['single-choice', 'multiple-choice'].includes(modelValue.value.type)) {
-    if ((modelValue.value as ChoiceProblem).options)
-      options.value = (modelValue.value as ChoiceProblem).options
-  }
-
   if (step.value === 3) {
     if (level.value === 0) {
       handleSubmit()
@@ -367,6 +317,7 @@ function removeSubProblem() {
             class="full-width"
             v-model="modelValue.type"
             placeholder="请选择类型"
+            :disabled="modelValue.createdAt !== modelValue.updatedAt"
           >
             <ElOption
               v-for="item in modelValueTypeOptions"
@@ -440,72 +391,17 @@ function removeSubProblem() {
         <ElFormItem label="题干">
           <PContentEditor class="full-width" v-model="modelValue.content" />
         </ElFormItem>
-        <ElFormItem v-if="modelValue.type.includes('choice')" label="选项">
-          <ElCard shadow="never" class="full-width">
-            <div style="text-align: right">
-              <ElButton
-                text
-                bg
-                circle
-                size="small"
-                type="danger"
-                :icon="Delete"
-                :disabled="options.length <= 0"
-                @click="options.pop()"
-              />
-              <ElButton
-                text
-                bg
-                circle
-                size="small"
-                type="success"
-                :icon="Plus"
-                @click="options.push({ id: options.length, content: [] })"
-              />
-            </div>
-            <ElDivider />
-            <ElRow v-for="option in options" :key="option.id" class="pt-2">
-              <ElCol :span="1">
-                <div style="text-align: right" class="pt-5">
-                  {{ String.fromCharCode(65 + option.id) }}．
-                </div>
-              </ElCol>
-              <ElCol :span="23">
-                <PContentEditor class="full-width" v-model="option.content" />
-              </ElCol>
-            </ElRow>
-          </ElCard>
+        <ElFormItem label="选项" v-if="modelValue.type === 'single-choice'">
+          <POptionEdit class="full-width" type="single" v-model:options="modelValue.options" v-model:single="modelValue.answer" />
         </ElFormItem>
-        <ElFormItem v-if="modelValue.type === 'single-choice'" label="答案">
-          <ElRadioGroup
-            class="full-width"
-            v-model="answerSingle"
-            border
-          >
-            <ElRadio
-              border
-              v-for="option in options"
-              :key="option.toString()"
-              :label="String.fromCharCode(option.id + 65)"
-            />
-          </ElRadioGroup>
+        <ElFormItem label="选项" v-if="modelValue.type === 'multiple-choice'">
+          <POptionEdit class="full-width" type="multiple" v-model:options="modelValue.options" v-model:multiple="modelValue.answer" />
         </ElFormItem>
-        <ElFormItem v-if="modelValue.type === 'multiple-choice'" label="答案">
-          <ElCheckboxGroup
-            class="full-width"
-            v-model="answerMulti"
-            border
-          >
-            <ElCheckbox
-              border
-              v-for="option in options"
-              :key="option.toString()"
-              :label="String.fromCharCode(option.id + 65)"
-            />
-          </ElCheckboxGroup>
+        <ElFormItem label="选项" v-if="modelValue.type === 'judge'">
+          <POptionEdit class="full-width" type="judge" v-model:judge="modelValue.answer" />
         </ElFormItem>
         <ElFormItem v-if="modelValue.type === 'answer'" label="答案">
-          <PContentEditor class="full-width" v-model="answerAnswer" />
+          <PContentEditor class="full-width" v-model="modelValue.answer" />
         </ElFormItem>
         <ElFormItem label="解答">
           <PContentEditor
@@ -552,6 +448,55 @@ function removeSubProblem() {
             />
           </ElSelect>
         </ElFormItem>
+        <!-- <ElFormItem label="错题">
+          <ElCard shadow="hover" class="full-width">
+            <ElForm>
+              <ElFormItem label="类型" class="py-2">
+                <ElSelect
+                  v-model="modelValue.wrong.type"
+                  placeholder="请选择错题类型"
+                  class="full-width"
+                >
+                  <ElOption
+                    v-for="item in wrongTypes"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    :disabled="!item.subjects.includes(modelValue.data.subject)"
+                  />
+                </ElSelect>
+              </ElFormItem>
+              <ElFormItem label="原因" class="py-2">
+                <PContentEditor
+                  v-model="modelValue.wrong.reason"
+                  placeholder="请输入错题原因"
+                  :disables="[
+                    'article',
+                    'code',
+                    'image',
+                    'material',
+                    'problem',
+                    'table',
+                    'textarea',
+                  ]"
+                />
+              </ElFormItem>
+              <ElFormItem label="总结" class="py-2">
+                <PContentEditor
+                  v-model="modelValue.wrong.lesson"
+                  placeholder="请输入错题总结"
+                  :disables="[
+                    'article',
+                    'code',
+                    'material',
+                    'problem',
+                    'table',
+                  ]"
+                />
+              </ElFormItem>
+            </ElForm>
+          </ElCard>
+        </ElFormItem> -->
       </ElForm>
     </transition>
     <transition
@@ -612,27 +557,27 @@ function removeSubProblem() {
               :key="idx"
             >
               <PProblem
-                v-if="!subProblems[subp.id - 1]"
+                v-if="!subProblems[idx]"
                 class="full-width"
                 :problem="subp.problem"
                 mode="display"
                 :level="level + 1"
-                :order="subp.id"
-                @dblclick="subProblems[subp.id - 1] = true"
+                :order="idx + 1"
+                @dblclick="subProblems[idx] = true"
               />
               <p v-else class="px-2">编辑中……</p>
               <ElDrawer
-                v-model="subProblems[subp.id - 1]"
+                v-model="subProblems[idx]"
                 direction="rtl"
                 :size="100 * 0.8 ** (level + 1) + '%'"
-                @before-close="subProblems[subp.id - 1] = false"
+                @before-close="subProblems[idx] = false"
               >
                 <template #default>
                   <PCreateProblem
-                    v-model="modelValue.subProblems[subp.id - 1].problem"
+                    v-model="modelValue.subProblems[idx].problem"
                     :level="level + 1"
-                    :id="modelValue._id + '-' + subp.id"
-                    @insert="subProblems[subp.id - 1] = false"
+                    :id="modelValue._id + '-' + (idx + 1)"
+                    @insert="subProblems[idx] = false"
                     :mode="mode"
                   />
                 </template>

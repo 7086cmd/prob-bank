@@ -8,6 +8,7 @@ import type {
   TextContent,
   TextareaContent,
   DividerContent,
+  ArticleContent,
 } from '@/../@types/content'
 import {
   ElCard,
@@ -21,7 +22,6 @@ import {
 } from 'element-plus'
 import {
   Code,
-  ParagraphAlphabet,
   Text,
   Pic,
   InsertTable,
@@ -29,6 +29,9 @@ import {
   DividingLine,
   PreviewOpen,
   PreviewClose,
+  DocDetail,
+  ParagraphRectangle,
+  // ListView
 } from '@icon-park/vue-next'
 import { toRefs, type Component, watch, ref } from 'vue'
 import type { TableContent } from '@/../@types/content'
@@ -38,6 +41,7 @@ import PImg from './PImg.vue'
 import PMaterialEdit from './PMaterialEdit.vue'
 import PContent from './PContent.vue'
 import { transformTo, transformFrom } from './transformer'
+import PArticleEdit from './PArticleEdit.vue'
 
 const props = defineProps<{
   modelValue: Content[]
@@ -48,6 +52,8 @@ const props = defineProps<{
     | 'material'
     | 'textarea'
     | 'image'
+    | 'article'
+    | 'problem'
   )[]
 }>()
 
@@ -127,7 +133,7 @@ const contentTypes = [
   },
   {
     name: '段落',
-    icon: ParagraphAlphabet,
+    icon: ParagraphRectangle,
     base: {
       type: 'textarea',
       content: '',
@@ -136,6 +142,21 @@ const contentTypes = [
     disabled: disables?.value?.includes('textarea'),
     description:
       '（Markdown 支持），支持 Markdown 基本语法，支持公式，暂不支持 PlantUML 和 Mermaid。',
+  },
+  {
+    name: '文章',
+    type: 'primary',
+    icon: DocDetail,
+    base: {
+      type: 'article',
+      article: {
+        title: '',
+        content: [],
+        author: '',
+        language: 'zh',
+        align: 'left',
+      },
+    },
   },
 ] as Array<{
   name: string
@@ -189,7 +210,7 @@ const preview = ref(false)
                 :placement="idx % 2 ? 'bottom' : 'top'"
               >
                 <ElButton
-                  :disabled="btn.disabled"
+                  v-if="!btn.disabled"
                   @click="contents.push(JSON.parse(JSON.stringify(btn.base)))"
                   :icon="btn.icon"
                   :type="btn.type"
@@ -296,6 +317,18 @@ const preview = ref(false)
             <ElDivider v-else-if="contents[idx].type === 'divider'">
               这一条礼节性的分割线，在正式场合不会显示这一段文字
             </ElDivider>
+            <PArticleEdit
+              v-else-if="contents[idx].type === 'article'"
+              v-model="(contents[idx] as ArticleContent).article.content"
+              v-model:title="(contents[idx] as ArticleContent).article.title"
+              v-model:author="
+                (contents[idx] as ArticleContent).article.author
+              "
+              v-model:language="
+                (contents[idx] as ArticleContent).article.language
+              "
+              v-model:align="(contents[idx] as ArticleContent).article.align"
+            />
           </div>
         </ElCard>
       </div>

@@ -10,8 +10,9 @@ export const useStatusStore = defineStore('status', {
       type: 'preview', // preview, print
       fontSize: 14, // 14
       answer: false, // 是否显示答案
+      wrong: false, // 是否在打印时显示错题信息
       mode: 'normal',
-      dispMode: 'student' as 'student' | 'teacher' | 'description' | 'answer',
+      dispMode: 'student' as 'student' | 'teacher' | 'description' | 'answer' | 'wrong',
       /**
        * （参考：学而思）
        * student: 仅显示题目
@@ -36,10 +37,11 @@ export const useStatusStore = defineStore('status', {
     paperMode() {
       this.mode = 'paper'
     },
-    useDisplayMode(mode: 'student' | 'teacher' | 'description' | 'answer') {
+    useDisplayMode(mode: 'student' | 'teacher' | 'description' | 'answer' | 'wrong', withWrong: boolean = false) {
       this.dispMode = mode
       this.type = 'print'
       this.fontSize = 14
+      this.wrong = withWrong
     },
     useDefaultMode() {
       this.dispMode = 'student'

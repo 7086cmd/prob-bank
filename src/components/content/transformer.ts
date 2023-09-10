@@ -3,6 +3,7 @@ import type { Content, TextContent } from '@/../@types/content'
 export function transformTo(ctn: Content[]) {
   // The General "Content" splits `text`, `formula` and `blank` content. So we need to transform it to the specific content.
   // Usual: Merge `text`, `formula`, and `blank`
+  console.log(ctn)
   return ctn
     .map((content) => {
       if (content.type === 'formula') {

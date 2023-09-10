@@ -13,7 +13,7 @@ ElResult,
 import { Right, Plus } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import type { AllProblem } from '@/../@types/problem'
-import PProblem from '@/components/problems/PProblem.vue'
+import PDisplayProblem from '@/components/problems/PDisplayProblem.vue'
 import { useStatusStore } from '@/stores/status'
 import NProgress from 'nprogress'
 import { getProblems } from '@/api'
@@ -185,8 +185,7 @@ watch(subject_filter, () => {
         )"
         :key="item._id"
       >
-        <PProblem
-          :problem="item"
+        <PDisplayProblem
           :_id="item._id"
           :order="index + 1"
           :level="0"

@@ -17,6 +17,7 @@ import {
   ElSpace,
   ElRow,
   ElCol,
+  ElDrawer,
 } from 'element-plus'
 import PChoiceProblem from './PChoiceProblem.vue'
 import PBlankProblem from './PBlankProblem.vue'
@@ -27,7 +28,7 @@ import {
   Plus,
   Edit,
   Delete,
-  ArrowLeft,
+  DataAnalysis,
   Close,
   SortUp,
   SortDown,
@@ -45,6 +46,8 @@ import Clipboard from 'clipboard'
 import { deleteProblem } from '@/api'
 import { md2c } from '@/utils/md2c'
 import { getProblemGroup } from '@/api'
+import { getWrongType } from './wrong'
+import dayjs from 'dayjs'
 
 const paper = usePaperStore()
 const status = useStatusStore()
@@ -74,6 +77,7 @@ const { problem, mode, order, level, _id, inPaper, preview, groupPreview } =
   toRefs(props)
 const valid = ref(false)
 const groupinform = ref<Content[]>([])
+const hoveredViewGroup = ref(false)
 
 if (
   ['Mathmatics', 'Physics', 'Chemistry'].includes(problem.value.data.subject)
@@ -157,6 +161,10 @@ function handle(_id: string) {
 const answer = ref(
   inPaper.value || mode.value === 'page' ? md2c(getAnswer(problem.value)) : ''
 )
+
+const { fontSize } = toRefs(status)
+
+const showWrong = ref(false)
 </script>
 
 <template>
@@ -317,6 +325,54 @@ const answer = ref(
           ><PContent :content="problem.details.procedure"
         /></ElCol>
       </ElRow>
+      <div
+        v-if="
+          status.dispMode === 'wrong' &&
+          level === 0 &&
+          Boolean(problem.wrong) &&
+          Boolean(problem.wrong?.type)
+        "
+      >
+        <ElRow>
+          <ElCol :span="3" class="black">错题分类</ElCol>
+          <ElCol :span="21">
+            <PContent
+              :content="[
+                {
+                  type: 'text',
+                  content: `${getWrongType(problem.wrong?.type)}`,
+                },
+              ]"
+            />
+          </ElCol>
+        </ElRow>
+        <ElRow>
+          <ElCol :span="3" class="black">错题原因</ElCol>
+          <ElCol :span="21">
+            <PContent :content="problem.wrong?.reason" />
+          </ElCol>
+        </ElRow>
+        <ElRow>
+          <ElCol :span="3" class="black">错题总结</ElCol>
+          <ElCol :span="21">
+            <PContent :content="problem.wrong?.lesson" />
+          </ElCol>
+        </ElRow>
+        <ElRow>
+          <ElCol :span="3" class="black">错题答案</ElCol>
+          <ElCol :span="21">
+            <PContent :content="answer" />
+          </ElCol>
+        </ElRow>
+        <ElRow>
+          <ElCol :span="3" class="black">错题重做</ElCol>
+          <ElCol :span="21">
+            <PContent
+              :content="[{ type: 'text', content: '请做在上面题目的空格中' }]"
+            />
+          </ElCol>
+        </ElRow>
+      </div>
     </div>
     <transition
       v-else-if="mode === 'page'"
@@ -324,6 +380,56 @@ const answer = ref(
       appear
     >
       <div>
+        <ElDrawer
+          v-model="showWrong"
+          direction="btt"
+          size="40%"
+          title="错题明细"
+        >
+          <div class="px-6">
+            <PContent
+              :content="[{ type: 'text', content: '1．错题分类：' }]"
+              title
+            />
+            <PContent
+              :content="[
+                { type: 'text', content: getWrongType(problem.wrong?.type) },
+              ]"
+              title
+            />
+            <br />
+            <PContent
+              v-if="problem.wrong?.reason"
+              :content="[{ type: 'text', content: '2．错题原因：' }]"
+              title
+            />
+            <PContent
+              v-if="problem.wrong?.reason"
+              :content="[{ type: 'text', content: problem.wrong?.reason }]"
+              author
+              :science="
+                ['Chemistry', 'Physics', 'Mathmatics'].includes(
+                  problem.data.subject
+                )
+              "
+            />
+            <br />
+            <PContent
+              v-if="problem.wrong?.lesson"
+              :content="[{ type: 'text', content: '3．错题总结：' }]"
+              title
+            />
+            <PContent
+              v-if="problem.wrong?.lesson"
+              :content="[{ type: 'text', content: problem.wrong?.lesson }]"
+              :science="
+                ['Chemistry', 'Physics', 'Mathmatics'].includes(
+                  problem.data.subject
+                )
+              "
+            />
+          </div>
+        </ElDrawer>
         <div
           v-if="status.type === 'preview'"
           style="text-align: right"
@@ -334,10 +440,12 @@ const answer = ref(
             text
             bg
             round
-            :icon="ArrowLeft"
+            :icon="DataAnalysis"
             type="info"
-            @click="router.push('/problem-group/display/' + problem.inGroup)"
-            >查看所在题组</ElButton
+            @click="
+              showWrong = Boolean(problem.wrong) && Boolean(problem.wrong?.type)
+            "
+            >错题明细</ElButton
           >
           <ElButton
             text
@@ -382,14 +490,36 @@ const answer = ref(
             </template>
           </ElPopconfirm>
         </div>
-        <span
+        <ElCard
+          shadow="hover"
           v-if="groupinform.length !== 0"
-          style="color: #666666"
           class="origin"
+          @mouseover="hoveredViewGroup = true"
+          @mouseleave="hoveredViewGroup = false"
         >
-          （题组材料）
-          <PContent :content="groupinform" />
-        </span>
+          <ElRow>
+            <ElCol :span="3" class="black">题组信息</ElCol>
+            <ElCol :span="21">
+              <div style="text-align: right">
+                <ElButton
+                  text
+                  type="info"
+                  :bg="hoveredViewGroup"
+                  :round="hoveredViewGroup"
+                  :circle="!hoveredViewGroup"
+                  @click="
+                    router.push(`/problem-group/display/${problem.inGroup}`)
+                  "
+                  :icon="View"
+                >
+                  <span v-if="hoveredViewGroup"> 查看所在题组 </span>
+                </ElButton>
+              </div>
+            </ElCol>
+          </ElRow>
+          <span class="px-4" />
+          <PContent :content="groupinform" prompt />
+        </ElCard>
         <PChoiceProblem
           v-if="
             problem.type === 'single-choice' ||
@@ -419,58 +549,127 @@ const answer = ref(
         <span v-else>没有这种类型的题目</span>
 
         <ElForm class="pt-4">
-          <ElFormItem label="编号">
-            <ElButton
-              class="copy"
-              text
-              bg
-              type="primary"
-              size="small"
-              :data-clipboard-text="problem._id"
-              >{{ problem._id }}</ElButton
-            >
-          </ElFormItem>
-          <ElFormItem label="来源">
-            <PContent
-              :content="[{ type: 'text', content: problem.data.origin }]"
-            />
-          </ElFormItem>
-          <ElFormItem label="考点">
-            <ElTag
-              v-for="tag in problem.details.tags"
-              :key="tag"
-              effect="plain"
-            >
-              {{ tag }}
-            </ElTag>
-          </ElFormItem>
-          <ElFormItem label="分类">
-            <span class="origin">{{
-              getGradeSubjectName(problem.data.level, problem.data.subject)
-            }}</span>
-          </ElFormItem>
-          <ElFormItem label="答案">
-            <PContent :content="answer" />
-          </ElFormItem>
-          <ElFormItem label="解答">
-            <PContent :content="problem.details.procedure" />
-          </ElFormItem>
-          <ElFormItem label="分析">
-            <PContent
-              :content="[{ type: 'text', content: problem.details.analytical }]"
-            />
-          </ElFormItem>
-          <ElFormItem label="点评">
-            <PContent
-              :content="[{ type: 'text', content: problem.details.comment }]"
-            />
-          </ElFormItem>
-          <ElFormItem label="创建日期">
-            {{ problem.createdAt }}
-          </ElFormItem>
-          <ElFormItem label="修改日期">
-            {{ problem.updatedAt }}
-          </ElFormItem>
+          <ElRow>
+            <ElCol :span="11">
+              <ElFormItem label="编号">
+                <ElButton
+                  class="copy"
+                  text
+                  bg
+                  type="primary"
+                  size="small"
+                  :data-clipboard-text="problem._id"
+                  >{{ problem._id }}</ElButton
+                >
+              </ElFormItem>
+            </ElCol>
+            <ElCol :span="2"></ElCol>
+            <ElCol :span="11">
+              <ElFormItem label="来源">
+                <PContent
+                  :content="[{ type: 'text', content: problem.data.origin }]"
+                  :science="
+                    ['Chemistry', 'Physics', 'Mathmatics'].includes(
+                      problem.data.subject
+                    )
+                  "
+                />
+              </ElFormItem>
+            </ElCol>
+          </ElRow>
+          <ElRow>
+            <ElCol :span="11">
+              <ElFormItem label="考点">
+                <ElTag
+                  v-for="tag in problem.details.tags"
+                  :key="tag"
+                  effect="plain"
+                >
+                  {{ tag }}
+                </ElTag>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :span="2"></ElCol>
+            <ElCol :span="11">
+              <ElFormItem label="分类">
+                <span class="origin">{{
+                  getGradeSubjectName(problem.data.level, problem.data.subject)
+                }}</span>
+              </ElFormItem>
+            </ElCol>
+          </ElRow>
+          <ElRow>
+            <ElCol :span="11">
+              <ElFormItem label="答案">
+                <PContent
+                  :content="answer"
+                  :science="
+                    ['Chemistry', 'Physics', 'Mathmatics'].includes(
+                      problem.data.subject
+                    )
+                  "
+                />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :span="2"></ElCol>
+            <ElCol :span="11">
+              <ElFormItem label="点评">
+                <PContent
+                  :content="[
+                    { type: 'text', content: problem.details.comment },
+                  ]"
+                  :science="
+                    ['Chemistry', 'Physics', 'Mathmatics'].includes(
+                      problem.data.subject
+                    )
+                  "
+                />
+              </ElFormItem>
+            </ElCol>
+          </ElRow>
+          <ElRow>
+            <ElCol :span="11">
+              <ElFormItem label="解答">
+                <PContent
+                  :content="problem.details.procedure"
+                  :science="
+                    ['Chemistry', 'Physics', 'Mathmatics'].includes(
+                      problem.data.subject
+                    )
+                  "
+                />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :span="2"></ElCol>
+            <ElCol :span="11">
+              <ElFormItem label="分析">
+                <PContent
+                  :content="[
+                    { type: 'text', content: problem.details.analytical },
+                  ]"
+                  :science="
+                    ['Chemistry', 'Physics', 'Mathmatics'].includes(
+                      problem.data.subject
+                    )
+                  "
+                />
+              </ElFormItem>
+            </ElCol>
+          </ElRow>
+
+          <ElRow>
+            <ElCol :span="11">
+              <ElFormItem label="创建日期">
+                {{ dayjs(problem.createdAt).format('YYYY-MM-DD YY:mm:ss') }}
+              </ElFormItem>
+            </ElCol>
+            <ElCol :span="2"></ElCol>
+            <ElCol :span="11">
+              <ElFormItem label="修改日期">
+                {{ dayjs(problem.updatedAt).format('YYYY-MM-DD YY:mm:ss') }}
+              </ElFormItem>
+            </ElCol>
+          </ElRow>
         </ElForm>
       </div>
     </transition>
@@ -481,6 +680,6 @@ const answer = ref(
 .black {
   /* 思源黑体 */
   font-family: 'Source Han Sans SC';
-  font-size: 13px;
+  font-size: v-bind(fontSize + 'px');
 }
 </style>

@@ -30,9 +30,10 @@ const { fontSize } = toRefs(status)
 const last = problem.value.content[problem.value.content.length - 1]
 
 if (
-  last.type === 'text' &&
-  !last.content.includes('（') &&
-  !last.content.includes('(')
+  (last.type === 'text' &&
+    !last.content.includes('（') &&
+    !last.content.includes('(')) ||
+  last.type === 'formula'
 ) {
   problem.value.content.push({
     type: 'text',
@@ -178,15 +179,19 @@ status.$subscribe(() => {
               v-model="optionsDisplay[idx].isTrue.value"
               :label="true"
               border
-              >{{ choices[choice.id] }}</ElRadio
-            ><ElCheckbox
+            >
+              {{ choices[choice.id] }}
+            </ElRadio>
+            <ElCheckbox
               v-if="problem.type === 'multiple-choice'"
               v-model="optionsDisplay[idx].isTrue.value"
               :label="true"
               border
-              >{{ choices[choice.id] }}</ElCheckbox
-            ><span v-if="problem.type === 'multiple-choice'">　　</span
-            ><PContent
+            >
+              {{ choices[choice.id] }}
+            </ElCheckbox>
+            <span v-if="problem.type === 'multiple-choice'">　　</span>
+            <PContent
               :class="[problem.type === 'multiple-choice' ? 'px-8' : 'px-1']"
               :content="choice.content"
             />

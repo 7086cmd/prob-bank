@@ -1,3 +1,5 @@
+import type { AllProblem } from './problem'
+
 export interface TextContent {
   type: 'text'
   content: string
@@ -39,6 +41,28 @@ export interface MaterialContent {
   }
 }
 
+export interface ArticleContent {
+  type: 'article'
+  article: {
+    title: string
+    author: string
+    content: string[]
+    align: 'left' | 'center'
+    language: 'zh' | 'en'
+  }
+}
+
+export interface ProblemContent {
+  type: 'problem'
+  problem: AllProblem
+}
+
+export interface ListContent {
+  type: 'list'
+  classify: 'ordered' | 'unordered'
+  contents: Content[][]
+}
+
 export interface CodeContent {
   type: 'code'
   language: string
@@ -66,5 +90,8 @@ export type Content =
   | MaterialContent
   | CodeContent
   | DividerContent
+  | ArticleContent
+  | ProblemContent
+  | ListContent
 
 export type Contents = Content[]

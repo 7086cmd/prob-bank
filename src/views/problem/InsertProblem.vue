@@ -12,7 +12,7 @@ const prob = ref<AllProblem>({
   _id: '',
   type: 'single-choice',
   content: [],
-  answer: -1,
+  answer: 0,
   options: [],
   image: '',
   details: {
@@ -32,6 +32,11 @@ const prob = ref<AllProblem>({
   },
   subProblems: [],
   inGroup: '',
+  wrong: {
+    type: '',
+    lesson: [],
+    reason: []
+  }
 })
 </script>
 

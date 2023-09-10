@@ -1,28 +1,28 @@
-import { lstatSync, readFileSync, readdirSync, writeFileSync } from 'fs'
-import { resolve } from 'path'
+import { MongoClient } from 'mongodb'
 
-function read(path = '.') {
-  const list = readdirSync(resolve(path))
+const url = 'mongodb://localhost:27017'
 
-  list.forEach((file) => {
-    // Check if it is a file
-    if (lstatSync(resolve(path, file)).isFile()) {
-      if (file.endsWith('.vue'))
-        writeFileSync(
-          readFileSync(resolve(path, file))
-            .toString()
-            .replace('<script setup>', '<script setup>\n// @ts-nocheck'),
-          resolve(path, file)
-        )
-      else if (file.endsWith('.ts'))
-        writeFileSync(
-          '// @ts-nocheck\n' + readFileSync(resolve(path, file)).toString(),
-          resolve(path, file)
-        )
-    } else {
-      read(resolve(path, file))
+const dbName = 'prob-bank'
+
+const client = new MongoClient(url, { useNewUrlParser: true })
+
+await client.connect()
+
+const db = client.db(dbName)
+
+const collection = db.collection('problems')
+
+const result = await collection.find({}).toArray()
+
+result.forEach(async x => {
+  if (!('wrong' in x)) {
+    x.wrong = {
+      type: '',
+      reason: [],
+      lesson: []
     }
-  })
-}
+    await collection.updateOne({ _id: x._id }, { $set: x })
+  }
+})
 
-read()
+await client.close()

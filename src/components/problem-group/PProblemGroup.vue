@@ -307,7 +307,19 @@ function handle() {
       <span class="description" v-if="group.data.origin">
         （{{ group.data.origin }}）
       </span>
-      <PContent :content="group.prompts" prompt />
+        <PContent
+          :content="[
+            {
+              type: 'text',
+              content: `根据材料，回答第${order}至${
+                order + group.problems.length - 1
+              }题。`,
+            },
+          ]"
+        />
+        <br />
+        <!-- eslint-disable-next-line no-irregular-whitespace -->
+        <span>　　</span><PContent :content="group.prompts" prompt />
       <div v-if="group.type === 'removable'">
         <PDisplayProblem
           v-for="(prob, index) in group.problems"

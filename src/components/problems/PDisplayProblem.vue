@@ -14,7 +14,7 @@ const props = defineProps<{
   mode: 'display' | 'page'
   order: number
   paper?: boolean
-  groupPreview: boolean
+  groupPreview?: boolean
 }>()
 
 const { _id, mode, order, paper, groupPreview } = toRefs(props)

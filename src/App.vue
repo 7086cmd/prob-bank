@@ -19,6 +19,12 @@ import {
   ElTooltip,
   ElIcon,
   ElNotification,
+  ElSwitch,
+  ElPopover,
+  ElForm,
+  ElSelect,
+  ElOption,
+  ElFormItem,
 } from 'element-plus'
 import { useDark, useWindowSize } from '@vueuse/core'
 import {
@@ -38,6 +44,8 @@ import {
   Plus,
   FullScreen,
   ArrowLeft,
+  DataAnalysis,
+  DataBoard,
 } from '@element-plus/icons-vue'
 import Dayjs from 'dayjs'
 import { ref, watch, toRefs, onMounted } from 'vue'
@@ -66,6 +74,32 @@ function showSizeChange() {
 }
 
 const { width, height } = useWindowSize()
+
+const wrong = ref(false)
+const mode = ref('student')
+
+const modes = [
+  {
+    value: 'student',
+    label: '学生版',
+  },
+  {
+    value: 'teacher',
+    label: '教师版',
+  },
+  {
+    value: 'description',
+    label: '解析版',
+  },
+  {
+    value: 'answer',
+    label: '答案版',
+  },
+  {
+    value: 'wrong',
+    label: '错题本专用版',
+  },
+]
 
 watch(width, () => {
   showSizeChange()
@@ -100,7 +134,9 @@ onMounted(() => {
   }
 })
 
-function usePrintToPDF(mode: 'student' | 'teacher' | 'description' | 'answer') {
+function usePrintToPDF(
+  mode: 'student' | 'teacher' | 'description' | 'answer' | 'wrong'
+) {
   const loading = ElLoading.service({
     lock: true,
     text:
@@ -111,7 +147,9 @@ function usePrintToPDF(mode: 'student' | 'teacher' | 'description' | 'answer') {
         ? '教师版'
         : mode === 'description'
         ? '解析版'
-        : '答案版') +
+        : mode === 'wrong'
+        ? '答案版'
+        : '错题本专用版') +
       '）\n' +
       `——温馨提示：${dialogs.get()}`,
     background: '#efefef',
@@ -330,53 +368,54 @@ const useWindowControls = (
                       @click="darkmode = !darkmode"
                       disabled
                     />
-
-                    <ElDropdown trigger="click">
-                      <ElButton
-                        v-if="status.type !== 'print'"
-                        text
-                        bg
-                        circle
-                        large
-                        type="info"
-                        :icon="Printer"
-                      />
-                      <template #dropdown>
-                        <ElDropdownMenu>
-                          <ElButton
-                            class="full-width"
-                            text
-                            @click="usePrintToPDF('student')"
-                          >
-                            学生版
-                          </ElButton>
-                          <br />
-                          <ElButton
-                            class="full-width"
-                            text
-                            @click="usePrintToPDF('teacher')"
-                          >
-                            教师版
-                          </ElButton>
-                          <br />
-                          <ElButton
-                            class="full-width"
-                            text
-                            @click="usePrintToPDF('description')"
-                          >
-                            解析版
-                          </ElButton>
-                          <br />
-                          <ElButton
-                            class="full-width"
-                            text
-                            @click="usePrintToPDF('answer')"
-                          >
-                            答案版
-                          </ElButton>
-                        </ElDropdownMenu>
+                    <ElPopover trigger="hover" width="20%">
+                      <template #reference>
+                        <ElButton
+                          v-if="status.type !== 'print'"
+                          text
+                          bg
+                          circle
+                          large
+                          type="info"
+                          :icon="Printer"
+                        />
                       </template>
-                    </ElDropdown>
+                      <ElForm>
+                        <ElFormItem label="错题" class="py-2">
+                          <ElSwitch
+                            style="text-align: center"
+                            v-model="wrong"
+                            :inactive-action-icon="DataAnalysis"
+                            :active-action-icon="DataBoard"
+                          />
+                        </ElFormItem>
+                        <ElFormItem label="模式" class="py-2">
+                          <ElSelect
+                            v-model="mode"
+                            class="full-width"
+                            placeholder="请选择"
+                          >
+                            <ElOption
+                              v-for="item in modes"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                            />
+                          </ElSelect>
+                        </ElFormItem>
+                        <div style="text-align: right">
+                          <ElButton
+                            type="primary"
+                            text
+                            bg
+                            size="small"
+                            @click="usePrintToPDF(mode, wrong)"
+                          >
+                            打印
+                          </ElButton>
+                        </div>
+                      </ElForm>
+                    </ElPopover>
                     <ElDivider
                       v-if="platform !== 'darwin' && status.type !== 'print'"
                       direction="vertical"

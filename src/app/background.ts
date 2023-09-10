@@ -515,6 +515,9 @@ app.whenReady().then(() => {
                   case 'answer':
                     mode = '答案版'
                     break
+                  case 'wrong':
+                    mode = '错题本专用版'
+                    break
                   default:
                     mode = '未知'
                     break
