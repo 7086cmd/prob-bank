@@ -34,10 +34,7 @@ import {
 import dayjs from 'dayjs'
 import { Notes, WritingFluently, Save } from '@icon-park/vue-next'
 import PProblem from '@/components/problems/PProblem.vue'
-import type {
-  AllProblem,
-  Problem,
-} from '@/../@types/problem'
+import type { AllProblem, Problem } from '@/../@types/problem'
 import { postProblem, putProblem } from '@/api'
 import PContentEditor from '../content/PContentEditor.vue'
 import { wrongTypes } from './wrong'
@@ -55,11 +52,7 @@ const props = defineProps<{
 
 const { modelValue, level, mode } = toRefs(props)
 
-console.log(modelValue.value)
-
 if (mode?.value) mode.value = 'default'
-
-const options = ref<{ id: number; content: Content[] }[]>([])
 
 watch(modelValue.value.subProblems, () => {
   emits('update: modelValue', modelValue.value)
@@ -228,26 +221,27 @@ function createBlankProblem(
 watch(
   () => modelValue.value.type,
   () => {
-    switch (modelValue.value.type) {
-      case 'single-choice': {
-        modelValue.value.answer = 0
-        break
+    if (modelValue.value.updatedAt === modelValue.value.createdAt)
+      switch (modelValue.value.type) {
+        case 'single-choice': {
+          modelValue.value.answer = 0
+          break
+        }
+        case 'answer': {
+          modelValue.value.answer = []
+          break
+        }
+        case 'multiple-choice': {
+          modelValue.value.answer = []
+          break
+        }
+        case 'judge': {
+          modelValue.value.answer = false
+          break
+        }
+        default:
+          break
       }
-      case 'answer': {
-        modelValue.value.answer = []
-        break
-      }
-      case 'multiple-choice': {
-        modelValue.value.answer = []
-        break
-      }
-      case 'judge': {
-        modelValue.value.answer = false
-        break
-      }
-      default:
-        break
-    }
   }
 )
 
@@ -392,13 +386,27 @@ function removeSubProblem() {
           <PContentEditor class="full-width" v-model="modelValue.content" />
         </ElFormItem>
         <ElFormItem label="选项" v-if="modelValue.type === 'single-choice'">
-          <POptionEdit class="full-width" type="single" v-model:options="modelValue.options" v-model:single="modelValue.answer" />
+          <POptionEdit
+            class="full-width"
+            type="single"
+            v-model:options="modelValue.options"
+            v-model:single="modelValue.answer"
+          />
         </ElFormItem>
         <ElFormItem label="选项" v-if="modelValue.type === 'multiple-choice'">
-          <POptionEdit class="full-width" type="multiple" v-model:options="modelValue.options" v-model:multiple="modelValue.answer" />
+          <POptionEdit
+            class="full-width"
+            type="multiple"
+            v-model:options="modelValue.options"
+            v-model:multiple="modelValue.answer"
+          />
         </ElFormItem>
         <ElFormItem label="选项" v-if="modelValue.type === 'judge'">
-          <POptionEdit class="full-width" type="judge" v-model:judge="modelValue.answer" />
+          <POptionEdit
+            class="full-width"
+            type="judge"
+            v-model:judge="modelValue.answer"
+          />
         </ElFormItem>
         <ElFormItem v-if="modelValue.type === 'answer'" label="答案">
           <PContentEditor class="full-width" v-model="modelValue.answer" />
@@ -448,7 +456,7 @@ function removeSubProblem() {
             />
           </ElSelect>
         </ElFormItem>
-        <!-- <ElFormItem label="错题">
+        <ElFormItem label="错题">
           <ElCard shadow="hover" class="full-width">
             <ElForm>
               <ElFormItem label="类型" class="py-2">
@@ -496,7 +504,7 @@ function removeSubProblem() {
               </ElFormItem>
             </ElForm>
           </ElCard>
-        </ElFormItem> -->
+        </ElFormItem>
       </ElForm>
     </transition>
     <transition

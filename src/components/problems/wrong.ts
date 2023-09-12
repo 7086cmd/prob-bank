@@ -32,6 +32,11 @@ export const wrongTypes = [
     label: '概念性错误',
   },
   {
+    value: 'stepping',
+    subjects: ['Math', 'Physics', 'Chemistry'],
+    label: '步骤性错误',
+  },
+  {
     value: 'knowledge',
     subjects: allSubjects,
     label: '知识性错误',
