@@ -22,7 +22,6 @@ import {
 } from 'element-plus'
 import { useStatusStore } from '@/stores/status'
 import { ref, watch, toRefs } from 'vue'
-import type { Content } from '@/../@types/content'
 import { useRouter } from 'vue-router'
 import {
   ArrowLeft,
@@ -170,27 +169,19 @@ function createBlankProblem(
   key: number,
   type: AllProblem['type'] = 'single-choice'
 ) {
-  let ansT: number | number[] | boolean | Content[] | undefined = 0
-  switch (type) {
-    case 'single-choice':
-      ansT = 0
-      break
-    case 'judge':
-      ansT = false
-      break
-    case 'blank':
-      ansT = undefined
-      break
-    default:
-      ansT = []
-      break
+  const answers = {
+    'single-choice': 0,
+    judge: false,
+    blank: undefined,
+    'multiple-choice': [],
+    answer: [],
   }
   const result = {
     _id: modelValue.value._id + '-' + key,
     type: modelValue.value.type,
     subProblems: [],
     content: [],
-    answer: ansT,
+    answer: answers[type],
     options: [],
     image: '',
     details: {

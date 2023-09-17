@@ -15,5 +15,5 @@ export function getAnswer(problem: AllProblem, level: 0 | 1 | 2 = 0) {
     result = result.slice(0, -1)
     result += '．'
   }
-  return result.replaceAll('；．', '．').replaceAll('；；', '；').replaceAll('；；', '；')
+  return result.replaceAll('；．', '．').replaceAll('；．', '；').replaceAll('；；', '；').replaceAll('；；', '；')
 }

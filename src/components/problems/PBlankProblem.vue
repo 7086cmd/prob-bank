@@ -50,7 +50,7 @@ if (
       v-if="type === 'display' || type === 'page'"
       :class="level === 0 ? [] : ['pl-4']"
     >
-      <span class="origin" v-if="type === 'display'"
+      <span class="origin order" v-if="type === 'display'"
         >{{
           getOrderText({
             level: level as 0 | 1 | 2,
@@ -58,7 +58,7 @@ if (
             origin: '',
           })
         }}
-        <span class="description" v-if="level === 0">
+        <span class="description" v-if="level === 0 && $route.name !== 'paper'">
           （{{ problem.data.origin }}）
         </span>
       </span>
@@ -85,5 +85,10 @@ if (
 .description {
   font-family: '方正仿宋' !important;
   font-size: v-bind((fontSize + 1) + 'px');
+}
+
+.order {
+  font-family: 'Ubuntu', 'Source Han Serif' !important;
+  font-size: v-bind(fontSize + 'px');
 }
 </style>

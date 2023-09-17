@@ -39,7 +39,7 @@ content.value.answer.map((ctn) => {
 </script>
 
 <template>
-  <span>
+  <span class="blank">
     <u>
       <PContent
         v-if="status.answer"
@@ -47,7 +47,7 @@ content.value.answer.map((ctn) => {
         answer
       />
       <span v-else>
-        <span v-for="i in useLength((content as BlankContent).answer)" :key="i" class="blank"
+        <span v-for="i in useLength((content as BlankContent).answer)" :key="i"
           >　</span
         >
       </span>
@@ -57,6 +57,6 @@ content.value.answer.map((ctn) => {
 
 <style scoped>
 .blank {
-  word-break: break-all;
+  word-break: keep-all;
 }
 </style>

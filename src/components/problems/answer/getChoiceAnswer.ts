@@ -13,7 +13,7 @@ export function getChoiceAnswerPerProblem(
     return (answer as number[])
       .map((x) => String.fromCharCode(x + 65))
       .sort((a, b) => a.charCodeAt(0) - b.charCodeAt(0))
-      .join('、')
+      .join('')
   } else {
     return 'Unsupported Problem Type'
   }

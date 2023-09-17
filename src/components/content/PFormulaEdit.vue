@@ -67,7 +67,7 @@ watch(inputedString, () => {
 
 .mtight {
   font-size: v-bind((fontSize - 1) + 'px') !important;
-  zoom: 96% !important;
+  zoom: 92% !important;
 }
 
 table {

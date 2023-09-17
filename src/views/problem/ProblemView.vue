@@ -8,7 +8,7 @@ import {
   ElCol,
   ElCheckboxButton,
   ElCheckboxGroup,
-ElResult,
+  ElResult,
 } from 'element-plus'
 import { Right, Plus } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
@@ -22,13 +22,45 @@ const router = useRouter()
 const status = useStatusStore()
 
 const pId = ref('')
+const range = ref(0)
 
 const problemSet = ref<AllProblem[]>([])
+const store = ref<AllProblem[]>([])
+
+const origin_filter = ref('')
+const subject_filter = ref<string[]>(['Math', 'Physics', 'Chemistry'])
+
+const show = ref(false)
+
+watch(origin_filter, () => {
+  show.value = false
+  show.value = true
+})
+
+watch(subject_filter, () => {
+  show.value = false
+  show.value = true
+})
+
+watch(show, () => {
+  range.value = 1
+})
 
 NProgress.start()
 
-getProblems().then(resp => {
-  problemSet.value = resp as AllProblem[]
+getProblems().then((resp) => {
+  store.value = resp?.reverse() as AllProblem[]
+  range.value = 1
+})
+
+watch(range, () => {
+  problemSet.value = store.value
+    ?.filter(
+      (_) =>
+        _.data.origin.includes(origin_filter.value) &&
+        subject_filter.value.includes(_.data.subject)
+    )
+    .filter((_, id) => id <= range.value * 60 - 1) as AllProblem[]
 })
 
 const subjects = [
@@ -81,21 +113,6 @@ const subjects = [
     label: '其他',
   },
 ]
-
-const origin_filter = ref('')
-const subject_filter = ref<string[]>(['Math', 'Physics', 'Chemistry'])
-
-const show = ref(false)
-
-watch(origin_filter, () => {
-  show.value = false
-  show.value = true
-})
-
-watch(subject_filter, () => {
-  show.value = false
-  show.value = true
-})
 </script>
 
 <template>
@@ -174,7 +191,6 @@ watch(subject_filter, () => {
         </ElCol>
       </ElRow>
     </transition>
-
     <ElDivider v-if="status.type === 'preview'" />
     <div v-if="problemSet.length !== 0">
       <div
@@ -192,6 +208,17 @@ watch(subject_filter, () => {
           mode="display"
         />
       </div>
+      <br />
+      <ElButton
+        class="full-width py-2"
+        text
+        bg
+        type="success"
+        v-if="range * 40 < store.length"
+        @click="range++"
+      >
+        加载更多
+      </ElButton>
     </div>
     <ElResult v-else icon="error">
       <template #title>
@@ -203,3 +230,9 @@ watch(subject_filter, () => {
     </ElResult>
   </div>
 </template>
+
+<style scoped>
+.full-width {
+  width: 100%;
+}
+</style>

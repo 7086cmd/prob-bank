@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: 'Source Han Sans';
-  src: url('./fonts/SourceHanSansSC-Regular.otf');
+  src: url('./fonts/SourceHanSansSC-Medium.otf');
   font-weight: normal;
 }
 
@@ -22,13 +22,13 @@
 
 @font-face {
   font-family: 'Source Han Serif';
-  src: url('./fonts/SourceHanSerifSC-Regular.otf');
+  src: url('./fonts/SourceHanSerifSC-Medium.otf');
   font-weight: normal;
 }
 
 @font-face {
   font-family: 'Source Han Serif';
-  src: url('./fonts/SourceHanSerifSC-Bold.otf');
+  src: url('./fonts/SourceHanSerifSC-Medium.otf');
   font-weight: bold;
 }
 

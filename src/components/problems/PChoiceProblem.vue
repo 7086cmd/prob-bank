@@ -140,14 +140,14 @@ status.$subscribe(() => {
 <template>
   <div :style="{ fontSize: `${status.fontSize}px` }">
     <div :class="level === 0 ? [] : ['pl-4']">
-      <span v-if="type === 'display'" class="origin"
+      <span v-if="type === 'display'" class="origin order"
         >{{
           getOrderText({
             level: level as 0 | 1 | 2,
             index: order as number,
             origin: problem.data.origin,
           })
-        }}<span class="description" v-if="level === 0"
+        }}<span class="description" v-if="level === 0 && $route.name !== 'paper'"
           >（{{ problem.data.origin }}）</span
         >
       </span>
@@ -221,5 +221,10 @@ status.$subscribe(() => {
 .description {
   font-family: '方正仿宋' !important;
   font-size: v-bind((fontSize + 1) + 'px');
+}
+
+.order {
+  font-family: 'Ubuntu', 'Source Han Serif' !important;
+  font-size: v-bind(fontSize + 'px');
 }
 </style>

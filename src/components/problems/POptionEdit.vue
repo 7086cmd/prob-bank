@@ -49,16 +49,21 @@ const {
   judge: _judge,
 } = toRefs(props)
 
+function optionIsSelected(type: 'single' | 'multiple' | 'judge', idx: number) {
+  if (type === 'single') {
+    return _single?.value === idx ? String.fromCharCode(idx + 65) : false
+  } else if (type === 'multiple') {
+    return _multiple?.value?.includes(idx) ?? false
+  } else if (type === 'judge') {
+    return _judge?.value
+  } else return false
+}
+
 const opts = ref<Option[]>(_options?.value ?? [])
-const btns = ref<boolean[]>(
-  type.value === 'judge'
-    ? []
-    : _options?.value?.map((_, idx) =>
-        type.value === 'single'
-          ? idx === _single?.value
-          : _multiple?.value?.includes(idx) ?? false
-      ) ?? []
+const btns = ref<(boolean | string)[]>(
+  opts.value.map((_, idx) => optionIsSelected(type.value, idx))
 )
+
 const ansSingle = ref<number>(_single?.value ?? 0)
 const ansMulti = ref<number[]>(_multiple?.value ?? [])
 const ansJudge = ref<boolean>(_judge.value ?? false)
@@ -77,7 +82,8 @@ watch(
 watch(
   ansSingle,
   () => {
-    btns.value = opts.value.map((_, idx) => ansSingle.value === idx)
+    type.value === 'single' ??
+      (btns.value = opts.value.map((_, idx) => ansSingle.value === idx))
     emits('update:single', ansSingle.value)
   },
   {
@@ -89,7 +95,8 @@ watch(
 watch(
   () => ansMulti.value,
   () => {
-    btns.value = opts.value.map((_, idx) => ansMulti.value.includes(idx))
+    type.value === 'multiple' ??
+      (btns.value = opts.value.map((_, idx) => ansMulti.value.includes(idx)))
     emits('update:multiple', ansMulti.value)
   },
   {

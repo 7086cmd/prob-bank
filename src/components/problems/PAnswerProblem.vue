@@ -39,28 +39,9 @@ function getProcedures(
 
 procedure.value = getProcedures()
 
-const length = ref(0)
+const length = ref(Math.round(Math.random() * 8))
 
-if (problem.value.details.procedure.length === 0) {
-  length.value = Math.round(Math.random() * 6)
-} else {
-  length.value = Math.round(
-    problem.value.details.procedure
-      .map((x) => {
-        if (x.type === 'text') return x.content
-        else if (x.type === 'formula') {
-          return x.content
-        } else {
-          return x.type
-        }
-      })
-      .join(' ').length / 12
-  )
-}
-
-if (
-  ['Math', 'Physics', 'Chemistry'].includes(problem.value.data.subject)
-) {
+if (['Math', 'Physics', 'Chemistry'].includes(problem.value.data.subject)) {
   problem.value.content.map((x) => {
     if (x.type === 'text') {
       x.content = x.content.replace(/\\frac/g, '\\dfrac').replaceAll('。', '．')
@@ -77,14 +58,16 @@ if (length.value < 3) length.value = 3
       v-if="type === 'display' || type === 'page'"
       :class="level === 0 ? [] : ['pl-4']"
     >
-      <span class="origin" v-if="type === 'display'"
+      <span class="origin order" v-if="type === 'display'"
         >{{
           getOrderText({
             level: level as 0 | 1 | 2,
             index: order as number,
             origin: problem.data.origin,
           })
-        }}<span class="description" v-if="level === 0"
+        }}<span
+          class="description"
+          v-if="level === 0 && $route.name !== 'paper'"
           >（{{ problem.data.origin }}）</span
         ></span
       >
@@ -131,5 +114,10 @@ if (length.value < 3) length.value = 3
 .description {
   font-family: '方正仿宋' !important;
   font-size: v-bind((fontSize + 1) + 'px');
+}
+
+.order {
+  font-family: 'Ubuntu', 'Source Han Serif' !important;
+  font-size: v-bind(fontSize + 'px');
 }
 </style>
