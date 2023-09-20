@@ -227,7 +227,7 @@ export const usePaperStore = defineStore('paper', {
       if (!this.existsItem(type, id)) return
       const resp =
         type === 'problem' ? await getProblem(id) : await getProblemGroup(id)
-      this.elements.map(item => {
+      this.elements.map((item) => {
         if (item.type === type && item._id === id) {
           item.content = resp as AllProblem | ProblemGroup
         }
@@ -282,6 +282,65 @@ export const usePaperStore = defineStore('paper', {
         }
       })
       return await this.getElementOrd(idx)
+    },
+    sortItem(method: 'time-asc' | 'time-dsc' | 'type') {
+      const ords = {
+        judge: 0,
+        'single-choice': 1,
+        'multiple-choice': 2,
+        blank: 3,
+        answer: 4,
+      }
+      if (method === 'type') {
+        this.elements.sort((a, b) => {
+          if (a.type === 'problem-index' || a.type === 'problem-group-index') {
+            return 1
+          } else if (
+            b.type === 'problem-index' ||
+            b.type === 'problem-group-index'
+          ) {
+            return -1
+          } else if (a.type.includes('problem') && b.type.includes('problem')) {
+            return ords[a.content.type] - ords[b.content.type]
+          } else {
+            return 1
+          }
+        })
+      } else if (method === 'time-asc') {
+        this.elements.sort((a, b) => {
+          if (a.type === 'problem-index' || a.type === 'problem-group-index') {
+            return 1
+          } else if (
+            b.type === 'problem-index' ||
+            b.type === 'problem-group-index'
+          ) {
+            return -1
+          } else if (a.type.includes('problem') && b.type.includes('problem')) {
+            return dayjs(a.content.createdAt).isBefore(b.content.createdAt)
+              ? -1
+              : 1
+          } else {
+            return 1
+          }
+        })
+      } else if (method === 'time-dsc') {
+        this.elements.sort((a, b) => {
+          if (a.type === 'problem-index' || a.type === 'problem-group-index') {
+            return 1
+          } else if (
+            b.type === 'problem-index' ||
+            b.type === 'problem-group-index'
+          ) {
+            return -1
+          } else if (a.type.includes('problem') && b.type.includes('problem')) {
+            return dayjs(a.content.createdAt).isBefore(b.content.createdAt)
+              ? 1
+              : -1
+          } else {
+            return 1
+          }
+        })
+      }
     },
   },
   persist: {

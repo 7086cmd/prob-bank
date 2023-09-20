@@ -63,21 +63,22 @@ watch(editorVal, () => {
 
 <style scoped>
 .normal {
-  font-family: 'Source Han Serif' !important;
+  font-family: 'Source Han Sans' !important;
   font-size: v-bind(fontSize + 'px');
   word-break: break-all;
+}
+
+@media print {
+  .normal {
+    color: #000000 !important;
+    font-family: 'Source Han Serif' !important;
+  }
 }
 
 .english {
   font-family: 'Times New Roman', 'Source Han Serif' !important;
   font-size: v-bind((fontSize) + 'px');
   word-break: keep-all;
-}
-
-@media print {
-  span {
-    color: #000000 !important;
-  }
 }
 
 .quote {

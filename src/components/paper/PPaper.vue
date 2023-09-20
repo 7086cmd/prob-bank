@@ -33,6 +33,8 @@ paper.$subscribe(() => {
     loaded.value = true
   })
 })
+
+paper.sortItem('type')
 </script>
 
 <template>
@@ -42,13 +44,14 @@ paper.$subscribe(() => {
         <p class="text-2xl py-2 origin" style="text-align: center">
           {{ paper.metadata.name }}
         </p>
-        <p v-if="status.type === 'preview'" class="text-m origin " style="text-align: right">
+        <p
+          v-if="status.type === 'preview' || status.dispMode !== 'student'"
+          class="text-m origin"
+          style="text-align: right"
+        >
           {{
             getGradeSubjectName(paper.metadata.level, paper.metadata.subject)
           }}试卷编号：{{ paper._id }}
-        </p>
-        <p class="text-m" style="text-align: center">
-          姓名：<u>　　　　　　　　</u>　学号：<u>　　　　　　　　</u>
         </p>
         <ElDivider />
         <div v-if="loaded">
@@ -63,4 +66,3 @@ paper.$subscribe(() => {
     </Transition>
   </div>
 </template>
-

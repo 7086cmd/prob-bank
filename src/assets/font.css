@@ -60,6 +60,11 @@ body {
   font-family: '方正楷体' !important;
 }
 
+code {
+  font-family: 'Menlo', 'Monaco', 'JetBrains Mono', 'Ubuntu Mono',
+    'Source Han Sans';
+}
+
 .description {
   font-family: '方正仿宋';
 }
