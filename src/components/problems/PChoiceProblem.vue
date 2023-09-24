@@ -6,16 +6,18 @@ import type {
   SingleChoiceProblem,
   MultipleChoiceProblem,
 } from '@/../@types/problem'
-import { readonly, ref, toRefs } from 'vue'
+import { readonly, ref, toRefs, unref } from 'vue'
 import { ElRadio, ElCheckbox, ElRow, ElCol, ElCard } from 'element-plus'
 import PContent from '../content/PContent.vue'
 import { useStatusStore } from '@/stores/status'
 import { getOrderText } from '@/utils/orderResult'
-import type { ImageContent } from '@/../@types/content'
+import type { Content, ImageContent, TextContent } from '@/../@types/content'
 import { useWindowSize } from '@vueuse/core'
+import { useSettingsStore } from '@/stores/settings'
 
 const status = useStatusStore()
 const size = useWindowSize()
+const settings = useSettingsStore()
 
 const props = defineProps<{
   problem: SingleChoiceProblem | MultipleChoiceProblem
@@ -27,18 +29,33 @@ const props = defineProps<{
 const { problem, type, order, level } = toRefs(props)
 const { fontSize } = toRefs(status)
 
-const last = problem.value.content[problem.value.content.length - 1]
+settings.$subscribe(() => {
+  if (settings.defaults.showQuote) {
+    const idx = problem.value.content.findLastIndex((x) => x.type === 'text')
+    if (problem.value.content[idx].type === 'text') {
+      if (
+        !(problem.value.content[idx] as TextContent).content.endsWith(
+          '（　　）'
+        )
+      ) {
+        (problem.value.content[idx] as TextContent).content += '（　　）'
+      }
+    }
+  }
+})
 
-if (
-  (last.type === 'text' &&
-    !last.content.includes('（') &&
-    !last.content.includes('(')) ||
-  last.type === 'formula'
-) {
-  problem.value.content.push({
-    type: 'text',
-    content: '（　　）',
-  })
+console.log('Show Quote', settings.defaults.showQuote)
+
+if (settings.defaults.showQuote) {
+  console.log('Use It')
+  const idx = problem.value.content.findLastIndex((x) => x.type === 'text')
+  if (problem.value.content[idx].type === 'text') {
+    if (
+      !(problem.value.content[idx] as TextContent).content.endsWith('（　　）')
+    ) {
+      (problem.value.content[idx] as TextContent).content += '（　　）'
+    }
+  }
 }
 
 const choices = new Array(26)
@@ -87,9 +104,11 @@ function useAnswer() {
             .replaceAll('\\text', '')
             .replaceAll('\\dfrac', '')
             .replaceAll('\\complement', 'C')
+            .replaceAll('\\leqslant', '<')
+            .replaceAll('\\geqslant', '>')
             .replaceAll('\\', '').length / 2.4
       } else if (content.type === 'text') {
-        length += content.content.length
+        length += content.content.length / 1.2
       } else if (content.type === 'image') {
         const img = new Image()
         img.src = content.src
@@ -147,7 +166,9 @@ status.$subscribe(() => {
             index: order as number,
             origin: problem.data.origin,
           })
-        }}<span class="description" v-if="level === 0 && $route.name !== 'paper'"
+        }}<span
+          class="description"
+          v-if="level === 0 && $route.name !== 'paper'"
           >（{{ problem.data.origin }}）</span
         >
       </span>

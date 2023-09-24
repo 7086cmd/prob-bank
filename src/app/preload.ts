@@ -65,7 +65,7 @@ contextBridge.exposeInMainWorld('probbank', {
     }
   },
   renderKatex(math: string) {
-    return katex.renderToString(math.replaceAll('\\mathbb', '\\bold'), {
+    return katex.renderToString(math, {
       displayMode: false,
       throwOnError: false,
       errorColor: '#cc0000',

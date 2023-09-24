@@ -2,9 +2,7 @@
 /* global defineProps */
 import type { Element } from '@/../@types/paper'
 import { ref, toRef } from 'vue'
-import PProblem from '../problems/PProblem.vue'
 import PDisplayProblem from '../problems/PDisplayProblem.vue'
-import PProblemGroup from '../problem-group/PProblemGroup.vue'
 import PDisplayProblemGroup from '../problem-group/PDisplayProblemGroup.vue'
 import { ElDivider } from 'element-plus'
 import PContent from '../content/PContent.vue'
@@ -39,9 +37,8 @@ if (element.value.type === 'prompt') {
 
 <template>
   <div v-if="ord !== 0">
-    <PProblem
+    <PDisplayProblem
       v-if="element.type === 'problem'"
-      :problem="element.content"
       :order="ord"
       mode="display"
       :level="0"
@@ -55,18 +52,17 @@ if (element.value.type === 'prompt') {
       mode="display"
       paper
     />
-    <PProblemGroup
+    <PDisplayProblemGroup
       v-else-if="element.type === 'problem-group'"
-      :group="element.content"
       :order="ord - 1"
       mode="display"
-      in-paper
+      paper
       :_id="element.content._id"
     />
     <PDisplayProblemGroup
       v-else-if="element.type === 'problem-group-index'"
       :_id="element._id"
-      :order="ord"
+      :order="ord - 1"
       mode="display"
       paper
     />

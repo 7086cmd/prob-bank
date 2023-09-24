@@ -30,6 +30,7 @@ declare module 'vue' {
     PFormulaEdit: typeof import('./src/components/content/PFormulaEdit.vue')['default']
     PImage: typeof import('./src/components/content/PImage.vue')['default']
     PImg: typeof import('./src/components/content/PImg.vue')['default']
+    PJudgeProblem: typeof import('./src/components/problems/PJudgeProblem.vue')['default']
     PLatex: typeof import('./src/components/content/PLatex.vue')['default']
     PMaterial: typeof import('./src/components/content/PMaterial.vue')['default']
     PMaterialEdit: typeof import('./src/components/content/PMaterialEdit.vue')['default']

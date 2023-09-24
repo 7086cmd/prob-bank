@@ -53,7 +53,6 @@ paper.sortItem('type')
             getGradeSubjectName(paper.metadata.level, paper.metadata.subject)
           }}试卷编号：{{ paper._id }}
         </p>
-        <ElDivider />
         <div v-if="loaded">
           <PPaperElement
             v-for="(element, idx) in paper.elements"

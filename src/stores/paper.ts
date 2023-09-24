@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { defineStore } from 'pinia'
 import type {
   Element,
@@ -112,22 +111,18 @@ export const usePaperStore = defineStore('paper', {
         const item = this.elements[idx]
         if (item.type === 'problem-index') {
           const resp = await getProblem(item._id)
-          if (resp.status === 'success') {
-            res.elements.push({
-              type: 'problem',
-              content: resp.data as AllProblem,
-              _id: resp.data._id,
-            })
-          }
+          res.elements.push({
+            type: 'problem',
+            content: resp as AllProblem,
+            _id: resp?._id as string,
+          })
         } else if (item.type === 'problem-group-index') {
           const resp = await getProblemGroup(item._id)
-          if (resp.status === 'success') {
-            res.elements.push({
-              type: 'problem-group',
-              content: resp.data as ProblemGroup,
-              _id: resp.data._id,
-            })
-          }
+          res.elements.push({
+            type: 'problem-group',
+            content: resp as ProblemGroup,
+            _id: resp?._id as string,
+          })
         } else {
           res.elements.push(item)
         }
@@ -238,7 +233,6 @@ export const usePaperStore = defineStore('paper', {
       if (this.existsItem(type, id)) return
       const resp =
         type === 'problem' ? await getProblem(id) : await getProblemGroup(id)
-      console.log(resp)
       if (type === 'problem') {
         this.elements.push({
           type: 'problem',
@@ -301,6 +295,7 @@ export const usePaperStore = defineStore('paper', {
           ) {
             return -1
           } else if (a.type.includes('problem') && b.type.includes('problem')) {
+            // @ts-ignore
             return ords[a.content.type] - ords[b.content.type]
           } else {
             return 1
@@ -316,6 +311,7 @@ export const usePaperStore = defineStore('paper', {
           ) {
             return -1
           } else if (a.type.includes('problem') && b.type.includes('problem')) {
+            // @ts-ignore
             return dayjs(a.content.createdAt).isBefore(b.content.createdAt)
               ? -1
               : 1
@@ -333,6 +329,7 @@ export const usePaperStore = defineStore('paper', {
           ) {
             return -1
           } else if (a.type.includes('problem') && b.type.includes('problem')) {
+            // @ts-ignore
             return dayjs(a.content.createdAt).isBefore(b.content.createdAt)
               ? 1
               : -1
@@ -344,12 +341,7 @@ export const usePaperStore = defineStore('paper', {
     },
   },
   persist: {
-    enabled: true,
-    strategies: [
-      {
-        storage: window.localStorage,
-        paths: ['_id', 'metadata', 'elements'],
-      },
-    ],
+    storage: window.localStorage,
+    paths: ['_id', 'metadata', 'elements'],
   },
 })

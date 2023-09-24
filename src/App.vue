@@ -333,6 +333,7 @@ const useWindowControls = (
                       circle
                       large
                       :icon="Setting"
+                      @click="router.push('/settings/')"
                     />
                     <ElButton
                       :type="status.answer ? 'danger' : 'success'"

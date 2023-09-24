@@ -6,6 +6,9 @@ import PProblem from './PProblem.vue'
 import { ElResult, ElSkeleton, ElCard } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { getProblem } from '@/api'
+import { getAnswerById } from './answer'
+import { md2c } from '@/utils/md2c'
+import type { Content } from '@/../@types/content'
 
 const router = useRouter()
 
@@ -27,11 +30,16 @@ const error = ref(false)
 const errText = ref('')
 const statusCode = ref(200)
 const d = ref({})
+const answer = ref<Content[]>([])
 
 getProblem(_id.value)
   .then((response) => {
-    loaded.value = true
     problem.value = response as AllProblem
+    return getAnswerById(_id.value)
+  })
+  .then((response) => {
+    answer.value = md2c(response)
+    loaded.value = true
   })
   .catch((err) => {
     console.log(err)
@@ -59,14 +67,17 @@ getProblem(_id.value)
     <transition enter-active-class="animate__animated animate__fadeIn">
       <div v-if="loaded && !error">
         <PProblem
-          :problem="(problem as AllProblem)"
+          :problem="problem as AllProblem"
           :mode="mode"
           :order="order"
           :level="0"
           :_id="_id"
-          @dblclick="groupPreview ? router.push(`/problem/display/${_id}`) : undefined"
+          @dblclick="
+            groupPreview ? router.push(`/problem/display/${_id}`) : undefined
+          "
           :in-paper="paper"
           :group-preview="groupPreview"
+          :answer="answer as Content[]"
         />
       </div>
     </transition>

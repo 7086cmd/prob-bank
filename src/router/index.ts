@@ -81,6 +81,11 @@ const router = createRouter({
       path: '/paper/',
       name: 'paper',
       component: () => import('../views/paper/ViewPaper.vue')
+    },
+    {
+      path: '/settings/',
+      name: 'settings',
+      component: () => import('../views/SettingsView.vue')
     }
   ]
 })

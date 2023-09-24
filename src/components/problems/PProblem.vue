@@ -19,6 +19,7 @@ import {
   ElCol,
   ElDrawer,
 } from 'element-plus'
+import PJudgeProblem from './PJudgeProblem.vue'
 import PChoiceProblem from './PChoiceProblem.vue'
 import PBlankProblem from './PBlankProblem.vue'
 import PAnswerProblem from './PAnswerProblem.vue'
@@ -40,11 +41,9 @@ import type { Content } from '@/../@types/content'
 import type { ProblemGroup } from '@/../@types/problem-group'
 import PContent from '../content/PContent.vue'
 import { usePaperStore } from '@/stores/paper'
-import { getAnswer } from './answer/getAnswer'
 import { getGradeSubjectName } from '@/utils/subject'
 import Clipboard from 'clipboard'
 import { deleteProblem } from '@/api'
-import { md2c } from '@/utils/md2c'
 import { getProblemGroup } from '@/api'
 import { getWrongType } from './wrong'
 import dayjs from 'dayjs'
@@ -71,6 +70,7 @@ const props = defineProps<{
   inPaper?: boolean
   preview?: boolean
   groupPreview?: boolean
+  answer?: Content[]
 }>()
 
 const { problem, mode, order, level, _id, inPaper, preview, groupPreview } =
@@ -158,10 +158,6 @@ function handle(_id: string) {
   else set(_id)
 }
 
-const answer = ref(
-  inPaper.value || mode.value === 'page' ? md2c(getAnswer(problem.value)) : ''
-)
-
 const { fontSize } = toRefs(status)
 
 const showWrong = ref(false)
@@ -175,8 +171,15 @@ const showWrong = ref(false)
       appear
     >
       <ElCard shadow="hover">
+        <PJudgeProblem
+          v-if="problem.type === 'judge'"
+          :type="mode"
+          :problem="problem"
+          :order="order"
+          :level="level"
+        />
         <PChoiceProblem
-          v-if="
+          v-else-if="
             problem.type === 'single-choice' ||
             problem.type === 'multiple-choice'
           "
@@ -283,8 +286,15 @@ const showWrong = ref(false)
       </ElCard>
     </transition>
     <div v-else-if="mode === 'display' && status.type === 'print'" style="px-4">
+      <PJudgeProblem
+        v-if="problem.type === 'judge'"
+        :type="mode"
+        :problem="problem"
+        :order="order"
+        :level="level"
+      />
       <PChoiceProblem
-        v-if="
+        v-else-if="
           problem.type === 'single-choice' || problem.type === 'multiple-choice'
         "
         :type="mode"
@@ -520,8 +530,15 @@ const showWrong = ref(false)
           <span class="px-4" />
           <PContent :content="groupinform" prompt />
         </ElCard>
+        <PJudgeProblem
+          v-if="problem.type === 'judge'"
+          :type="mode"
+          :problem="problem"
+          :order="order"
+          :level="level"
+        />
         <PChoiceProblem
-          v-if="
+          v-else-if="
             problem.type === 'single-choice' ||
             problem.type === 'multiple-choice'
           "

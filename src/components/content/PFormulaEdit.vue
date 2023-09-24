@@ -3,14 +3,18 @@
 import { ref, watch, toRefs, onMounted } from 'vue'
 import { useStatusStore } from '@/stores/status'
 import { ElPopover, ElInput } from 'element-plus'
+import { useSettingsStore } from '@/stores/settings'
+
+const settings = useSettingsStore()
 
 const props = defineProps<{
   modelValue: string
   editable: boolean
+  display?: number
 }>()
 const emits = defineEmits(['update:modelValue'])
 
-const { modelValue, editable } = toRefs(props)
+const { modelValue, editable, display } = toRefs(props)
 
 const renderedString = ref('')
 const status = useStatusStore()
@@ -18,14 +22,46 @@ const { fontSize } = toRefs(status)
 const inputedString = ref(modelValue.value)
 const hover = ref(false)
 const formulaIt = ref<InstanceType<typeof HTMLSpanElement>>()
+const handler = (str: string) => {
+  let result = str
+  if (display?.value !== 1)
+    if (settings.math.collection.collectionOfNumbersDisplayMode === 'bold') {
+      result = result.replaceAll('\\mathbb', '\\bold')
+    } else {
+      result = result.replaceAll('\\bold', '\\mathbb')
+    }
+  if (display?.value !== 2)
+    if (settings.math.collection.irrationalNumbers === '\\mathbb{Q}^c') {
+      result = result.replaceAll(
+        '\\complement_{\\mathbb{Q}}\\mathbb{R}',
+        '\\mathbb{Q}^c'
+      )
+    } else {
+      result = result.replaceAll(
+        '\\mathbb{Q}^c',
+        '\\complement_{\\mathbb{Q}}\\mathbb{R}'
+      )
+    }
+  return result
+}
+
+settings.$subscribe(() => {
+  renderedString.value = window.probbank.renderKatex(
+    handler(inputedString.value)
+  )
+})
 
 onMounted(() => {
-  renderedString.value = window.probbank.renderKatex(inputedString.value)
+  renderedString.value = window.probbank.renderKatex(
+    handler(inputedString.value)
+  )
 })
 
 watch(inputedString, () => {
   emits('update:modelValue', inputedString.value)
-  renderedString.value = window.probbank.renderKatex(inputedString.value)
+  renderedString.value = window.probbank.renderKatex(
+    handler(inputedString.value)
+  )
   // formulaIt.value!.innerHTML = renderedString.value
 })
 </script>
@@ -42,7 +78,8 @@ watch(inputedString, () => {
         v-if="renderedString !== ''"
         @mouseover="hover = true"
         @mouseleave="hover = false"
-      ><span v-html="renderedString" /></span>
+        ><span v-html="renderedString"
+      /></span>
       <span v-else @mouseover="hover = true" @mouseleave="hover = false">
         点我编辑内容
       </span>

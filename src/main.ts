@@ -8,7 +8,7 @@ import MavonEditor from 'mavon-editor'
 import App from './App.vue'
 import router from './router'
 
-import piniaPluginPersist from 'pinia-plugin-persist'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import './assets/main.css'
 import './style.css'
@@ -32,7 +32,7 @@ import "vitepress/dist/client/theme-default/styles/components/vp-doc.css";
 import "vitepress/dist/client/theme-default/styles/components/vp-sponsor.css";
 
 createApp(App)
-  .use(createPinia().use(piniaPluginPersist))
+  .use(createPinia().use(piniaPluginPersistedstate))
   .use(router)
   .use(VaTeX)
   .use(ElementPlus)

@@ -41,6 +41,7 @@ if (typeof content.value !== 'object') content.value = []
 </script>
 
 <template>
+  <slot name="prepend" />
   <span v-for="(item, idx) in content" :key="idx" class="content">
     <PTextEdit
       v-if="item.type === 'text'"
@@ -91,4 +92,5 @@ if (typeof content.value !== 'object') content.value = []
     />
     <PArticle v-else-if="item.type === 'article'" :article="item.article" />
   </span>
+  <slot name="append"/>
 </template>

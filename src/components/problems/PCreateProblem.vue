@@ -447,7 +447,7 @@ function removeSubProblem() {
             />
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="错题">
+        <ElFormItem label="错题" v-if="level === 0">
           <ElCard shadow="hover" class="full-width">
             <ElForm>
               <ElFormItem label="类型" class="py-2">
