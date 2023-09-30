@@ -26,7 +26,7 @@ const prob = ref<AllProblem>({
   data: {
     difficulty: 0,
     referred: 0,
-    level: ['P', 0],
+    level: ['S', 1],
     subject: 'Others',
     origin: '',
   },

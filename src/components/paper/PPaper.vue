@@ -1,12 +1,13 @@
 <script setup lang="ts">
 /*eslint-disable no-irregular-whitespace */
-// @ts-nocheck
 import { ref } from 'vue'
 import { getGradeSubjectName } from '@/utils/subject'
-import { ElDivider } from 'element-plus'
 import { usePaperStore } from '@/stores/paper'
 import PPaperElement from './PPaperElement.vue'
 import { useStatusStore } from '@/stores/status'
+import type { Content } from '@/../@types/content'
+import { classifyAnwersByType, getAnswerInPaper } from './answer'
+import PContent from '../content/PContent.vue'
 
 const paper = usePaperStore()
 const status = useStatusStore()
@@ -20,6 +21,12 @@ const ordlist = ref<
 >([])
 
 const loaded = ref(false)
+
+const answer = ref<Content[]>([])
+
+getAnswerInPaper(paper.elements).then((resp) => {
+  answer.value = classifyAnwersByType(resp)
+})
 
 paper.getAllElementsId().then((resp) => {
   ordlist.value = resp
@@ -54,14 +61,23 @@ paper.sortItem('type')
           }}试卷编号：{{ paper._id }}
         </p>
         <div v-if="loaded">
-          <PPaperElement
-            v-for="(element, idx) in paper.elements"
-            :key="idx.toString()"
-            :element="element"
-            :index="idx"
-          />
+          <div v-if="status.dispMode !== 'answer'">
+            <PPaperElement
+              v-for="(element, idx) in paper.elements"
+              :key="idx.toString()"
+              :element="element"
+              :index="idx"
+            />
+          </div>
+          <div v-else>
+            <PContent :content="answer" />
+          </div>
         </div>
       </div>
     </Transition>
   </div>
 </template>
+
+<style>
+@import '@/assets/font.css';
+</style>

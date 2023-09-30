@@ -1,5 +1,5 @@
 import { Content } from './content'
-import { Problem } from './problem'
+import { AllProblem } from './problem'
 
 export interface RemovableProblemGroup {
   _id: string // 由 MongoDB 自动生成的 ID，在后端类型为 ObjectId
@@ -34,7 +34,7 @@ export interface UnremovableProblemGroup {
   _id: string
   type: 'unremovable'
   prompts: Content[]
-  problems: Problem[] // UnremovableProblem 中，不允许题目单独加到“problem“ 这一 collection ，因此，在这里存储的是 Problem 对象
+  problems: AllProblem[] // UnremovableProblem 中，不允许题目单独加到“problem“ 这一 collection ，因此，在这里存储的是 Problem 对象
   createdAt: string // 创建时间
   updatedAt: string // 更新时间
   data: {

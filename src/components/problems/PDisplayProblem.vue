@@ -1,13 +1,12 @@
 <script setup lang="ts">
 /* global defineProps */
 import type { AllProblem } from '@/../@types/problem'
-import { toRefs, ref, unref } from 'vue'
+import { toRefs, ref } from 'vue'
 import PProblem from './PProblem.vue'
 import { ElResult, ElSkeleton, ElCard } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { getProblem } from '@/api'
 import { getAnswerById } from './answer'
-import { md2c } from '@/utils/md2c'
 import type { Content } from '@/../@types/content'
 
 const router = useRouter()
@@ -21,8 +20,6 @@ const props = defineProps<{
 }>()
 
 const { _id, mode, order, paper, groupPreview } = toRefs(props)
-
-console.log(unref(_id), unref(groupPreview))
 
 const problem = ref<AllProblem | null>(null)
 const loaded = ref(false)
@@ -38,11 +35,10 @@ getProblem(_id.value)
     return getAnswerById(_id.value)
   })
   .then((response) => {
-    answer.value = md2c(response)
+    answer.value = response
     loaded.value = true
   })
   .catch((err) => {
-    console.log(err)
     error.value = true
     loaded.value = true
     d.value = err
@@ -67,7 +63,7 @@ getProblem(_id.value)
     <transition enter-active-class="animate__animated animate__fadeIn">
       <div v-if="loaded && !error">
         <PProblem
-          :problem="problem as AllProblem"
+          :problem="(problem as AllProblem)"
           :mode="mode"
           :order="order"
           :level="0"
@@ -77,7 +73,7 @@ getProblem(_id.value)
           "
           :in-paper="paper"
           :group-preview="groupPreview"
-          :answer="answer as Content[]"
+          :answer="(answer as Content[])"
         />
       </div>
     </transition>

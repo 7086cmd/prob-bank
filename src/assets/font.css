@@ -38,11 +38,6 @@
 }
 
 @font-face {
-  font-family: 'Times New Roman';
-  src: url('./Times\ New\ Roman.ttf');
-}
-
-@font-face {
   font-family: '方正仿宋';
   src: url('./fonts/FZFSJW.TTF');
 }
@@ -54,6 +49,30 @@
 
 body {
   font-family: 'Ubuntu', 'Source Han Serif';
+}
+
+th {
+  font-family: 'Ubuntu', 'Source Han Sans' !important;
+}
+
+.empasis {
+  text-emphasis: dot;
+  text-emphasis-position: under;
+  font-style: normal;
+}
+
+.wave {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+}
+
+.underline {
+  text-decoration-line: underline;
+}
+
+.double-underline {
+  text-decoration-line: underline;
+  text-decoration-style: double;
 }
 
 .quote {
@@ -72,5 +91,9 @@ code {
 @media print {
   body {
     font-family: 'Ubuntu', 'Source Han Serif';
+  }
+
+  td {
+    font-family: 'Source Han Serif SC' !important;
   }
 }

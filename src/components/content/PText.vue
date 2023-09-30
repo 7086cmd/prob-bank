@@ -94,4 +94,25 @@ span {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+
+.empasis {
+  text-emphasis: '.';
+  text-emphasis-position: under;
+  font-style: normal;
+}
+
+.wave {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+}
+
+.underline {
+  text-decoration-line: underline;
+}
+
+.double-underline {
+  text-decoration-line: underline;
+  text-decoration-style: double;
+}
+
 </style>

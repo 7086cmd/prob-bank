@@ -24,7 +24,15 @@ contextBridge.exposeInMainWorld('probbank', {
   actionBaseWindow: (
     action: 'close' | 'minimize' | 'maximize' | 'fullscreen'
   ) => {
-    ipcRenderer.send('baseWindowAction', action)
+    if (action === 'close') {
+      ipcRenderer.send('closeBaseWindow')
+    } else if (action === 'minimize') {
+      ipcRenderer.send('minimizeBaseWindow')
+    } else if (action === 'maximize') {
+      ipcRenderer.send('maximizeBaseWindow')
+    } else if (action === 'fullscreen') {
+      ipcRenderer.send('fullscreenBaseWindow')
+    }
   },
   os: process.platform,
   arch: process.arch,

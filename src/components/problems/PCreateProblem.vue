@@ -19,6 +19,7 @@ import {
   ElDivider,
   ElNotification,
   ElDrawer,
+  ElSwitch,
 } from 'element-plus'
 import { useStatusStore } from '@/stores/status'
 import { ref, watch, toRefs } from 'vue'
@@ -212,6 +213,9 @@ function createBlankProblem(
 watch(
   () => modelValue.value.type,
   () => {
+    if (modelValue.value.type === 'answer') {
+      modelValue.value.emptyBlankArea = true
+    }
     if (modelValue.value.updatedAt === modelValue.value.createdAt)
       switch (modelValue.value.type) {
         case 'single-choice': {
@@ -399,8 +403,28 @@ function removeSubProblem() {
             v-model:judge="modelValue.answer"
           />
         </ElFormItem>
-        <ElFormItem v-if="modelValue.type === 'answer'" label="答案">
-          <PContentEditor class="full-width" v-model="modelValue.answer" />
+        <ElFormItem
+          v-if="modelValue.type === 'answer'"
+          label="答案"
+          class="full-width"
+        >
+          <ElCard shadow="hover" class="full-width">
+            <ElForm>
+              <ElFormItem label="答案文">
+                <PContentEditor
+                  class="full-width"
+                  v-model="modelValue.answer"
+                />
+              </ElFormItem>
+              <ElFormItem label="答题区">
+                <ElSwitch
+                  v-model="modelValue.emptyBlankArea"
+                  inactive-text="不显示"
+                  active-text="显示"
+                />
+              </ElFormItem>
+            </ElForm>
+          </ElCard>
         </ElFormItem>
         <ElFormItem label="解答">
           <PContentEditor

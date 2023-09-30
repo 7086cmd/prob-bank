@@ -65,6 +65,7 @@ export interface JudgeProblem extends Problem {
 export interface AnswerProblem extends Problem {
   type: 'answer'
   answer: Content[] // 答案
+  emptyBlankArea: boolean // 如果是画图题，则 true，意思是不需要答题区域
 }
 
 export type ChoiceProblem = SingleChoiceProblem | MultipleChoiceProblem

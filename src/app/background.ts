@@ -427,10 +427,22 @@ app.whenReady().then(() => {
     }
     connection.close()
   })
-
+  ipcMain.on('closeBaseWindow', () => {
+    baseWindow.close()
+  })
+  ipcMain.on('minimizeBaseWindow', () => {
+    baseWindow.minimize()
+  })
+  ipcMain.on('maximizeBaseWindow', () => {
+    baseWindow.isMaximized() ? baseWindow.unmaximize() : baseWindow.maximize()
+  })
+  ipcMain.on('fullscreenBaseWindow', () => {
+    baseWindow.setFullScreen(!baseWindow.isFullScreen())
+  })
   ipcMain.on(
     'baseWindowAction',
     (_evt, action: 'close' | 'minimize' | 'maximize' | 'fullscreen') => {
+      console.log('recieved')
       switch (action) {
         case 'close':
           baseWindow.close()

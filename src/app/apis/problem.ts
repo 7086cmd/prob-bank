@@ -2,6 +2,7 @@ import type { AllProblem } from '@/../@types/problem'
 import dayjs from 'dayjs'
 import { MongoClient, ObjectId } from 'mongodb'
 import { log } from '../log'
+import { problemHandler } from './problem-handler'
 
 export async function getProblem(id: string) {
   const url = 'mongodb://127.0.0.1:27017'
@@ -75,7 +76,7 @@ export async function modifyProblem(problem: AllProblem) {
       { _id: new ObjectId(problem._id) },
       {
         $set: {
-          ...problem,
+          ...problemHandler(problem),
           _id: new ObjectId(problem._id),
           updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         },
@@ -91,7 +92,7 @@ export async function modifyProblem(problem: AllProblem) {
     const db = client.db('prob-bank')
     const collection = db.collection('problems')
     const result = await collection.insertOne({
-      ...problem,
+      ...problemHandler(problem),
       _id: new ObjectId(problem._id),
       createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),

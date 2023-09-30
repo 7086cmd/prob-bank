@@ -28,6 +28,9 @@ export const useSettingsStore = defineStore({
         period: '．' as '。' | '．',
       },
     },
+    politics: {
+      judgeAnswerType: 'T/F' as 'T/F' | 'Y/N' | '√/×'
+    }
   }),
   actions: {
     useQuote(quote: boolean) {
@@ -53,6 +56,9 @@ export const useSettingsStore = defineStore({
     useChemistryPeriod(type: '。' | '．') {
       this.chemistry.punctuation.period = type
     },
+    usePoliticsJudgeAnswerType(type: 'T/F' | 'Y/N' | '√/×') {
+      this.politics.judgeAnswerType = type
+    }
   },
   persist: {
     storage: window.localStorage,

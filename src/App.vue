@@ -432,7 +432,9 @@ const useWindowControls = (
                       @click="useWindowControls('fullscreen')"
                     />
                     <ElButton
-                      v-if="platform !== 'darwin' && status.type !== 'print'"
+                      v-if="
+                        platform !== 'darwin' && status.type !== 'print'
+                      "
                       text
                       bg
                       circle

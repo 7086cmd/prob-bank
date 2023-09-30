@@ -12,6 +12,8 @@ export function c2md(content: Content[]): string {
         return `!blank[${c2md(ctn.answer)}]`
       } else if (ctn.type === 'textarea') {
         return `!textarea[${ctn.content}]`
+      } else if (ctn.type === 'image') {
+        return `![${ctn.alt}](${ctn.src})`
       }
     })
     .join('')

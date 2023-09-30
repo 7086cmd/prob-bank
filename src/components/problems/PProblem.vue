@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-// @ts-nocheck
 /* global defineProps */
 /* eslint-disable vue/no-deprecated-filter */
 import type { AllProblem } from '@/../@types/problem'
@@ -201,7 +200,7 @@ const showWrong = ref(false)
           :type="mode"
           :problem="problem"
           :order="order"
-          :level="level"
+          :level="(level as 0 | 1)"
           :preview="preview"
         />
         <span v-else>没有这种类型的题目</span>
@@ -314,8 +313,8 @@ const showWrong = ref(false)
         v-else-if="problem.type === 'answer'"
         :type="mode"
         :problem="problem"
-        :order="order"
-        :level="level"
+        :order="(order as number)"
+        :level="(level as 0 | 1)"
         :preview="preview"
       />
       <span v-else>没有这种类型的题目</span>
@@ -327,7 +326,7 @@ const showWrong = ref(false)
         "
       >
         <ElCol :span="3" class="black">答案</ElCol>
-        <ElCol :span="21"><PContent :content="answer" /></ElCol>
+        <ElCol :span="21"><PContent :content="(answer as Content[])" /></ElCol>
       </ElRow>
       <ElRow v-if="status.dispMode === 'description' && level === 0">
         <ElCol :span="3" class="black">解析</ElCol>
@@ -350,7 +349,7 @@ const showWrong = ref(false)
               :content="[
                 {
                   type: 'text',
-                  content: `${getWrongType(problem.wrong?.type)}`,
+                  content: `${getWrongType(problem.wrong?.type as string)}`,
                 },
               ]"
             />
@@ -359,19 +358,19 @@ const showWrong = ref(false)
         <ElRow>
           <ElCol :span="3" class="black">错题原因</ElCol>
           <ElCol :span="21">
-            <PContent :content="problem.wrong?.reason" />
+            <PContent :content="(problem.wrong?.reason as Content[])" />
           </ElCol>
         </ElRow>
         <ElRow>
           <ElCol :span="3" class="black">错题总结</ElCol>
           <ElCol :span="21">
-            <PContent :content="problem.wrong?.lesson" />
+            <PContent :content="(problem.wrong?.lesson as Content[])" />
           </ElCol>
         </ElRow>
         <ElRow>
           <ElCol :span="3" class="black">错题答案</ElCol>
           <ElCol :span="21">
-            <PContent :content="answer" />
+            <PContent :content="(answer as Content[])" />
           </ElCol>
         </ElRow>
         <ElRow>
@@ -403,7 +402,7 @@ const showWrong = ref(false)
             />
             <PContent
               :content="[
-                { type: 'text', content: getWrongType(problem.wrong?.type) },
+                { type: 'text', content: getWrongType(problem.wrong?.type as string) },
               ]"
               title
             />
@@ -415,7 +414,7 @@ const showWrong = ref(false)
             />
             <PContent
               v-if="problem.wrong?.reason"
-              :content="[{ type: 'text', content: problem.wrong?.reason }]"
+              :content="problem.wrong?.reason"
               author
               :science="
                 ['Chemistry', 'Physics', 'Mathmatics'].includes(
@@ -431,7 +430,7 @@ const showWrong = ref(false)
             />
             <PContent
               v-if="problem.wrong?.lesson"
-              :content="[{ type: 'text', content: problem.wrong?.lesson }]"
+              :content="problem.wrong?.reason"
               :science="
                 ['Chemistry', 'Physics', 'Mathmatics'].includes(
                   problem.data.subject
@@ -560,7 +559,7 @@ const showWrong = ref(false)
           :type="mode"
           :problem="problem"
           :order="order"
-          :level="level"
+          :level="(level as 0 | 1)"
           :preview="preview"
         />
         <span v-else>没有这种类型的题目</span>
@@ -619,7 +618,7 @@ const showWrong = ref(false)
             <ElCol :span="11">
               <ElFormItem label="答案">
                 <PContent
-                  :content="answer"
+                  :content="(answer as Content[])"
                   :science="
                     ['Chemistry', 'Physics', 'Mathmatics'].includes(
                       problem.data.subject

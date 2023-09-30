@@ -16,6 +16,8 @@ import {
   ElOption,
   ElRow,
   ElSelect,
+  ElRadioButton,
+  ElRadioGroup,
 } from 'element-plus'
 import { Delete, Plus, Upload } from '@element-plus/icons-vue'
 import type { AllProblem } from '@/../@types/problem'
@@ -61,6 +63,8 @@ const problemsOfRemovable = ref<
   }[]
 >([])
 
+step.value = modelValue.value.type === 'removable' ? 2 : 1
+
 async function createmodelValueUploader() {
   step.value += 1
   let method = 'put'
@@ -74,7 +78,9 @@ async function createmodelValueUploader() {
     )
   }
 
-  const result = await (method === 'post' ? postProblemGroup : putProblemGroup)(modelValue.value)
+  const result = await (method === 'post' ? postProblemGroup : putProblemGroup)(
+    modelValue.value
+  )
 
   if (result) {
     modelValue.value._id = result as string
@@ -90,9 +96,11 @@ function createRemovableProblem() {
   problemsOfRemovable.value.push({
     problem: {
       _id: '',
-      type: '',
+      type: 'single-choice',
       content: [],
-      image: undefined,
+      answer: 0,
+      options: [],
+      image: '',
       details: {
         analytical: '',
         procedure: [],
@@ -102,18 +110,23 @@ function createRemovableProblem() {
       createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       data: {
-        subject: modelValue.value.data.subject,
-        origin: modelValue.value.data.origin,
-        level: modelValue.value.data.level,
         difficulty: 0,
         referred: 0,
+        level: modelValue.value.data.level,
+        subject: modelValue.value.data.subject,
+        origin: modelValue.value.data.origin,
       },
       subProblems: [],
+      wrong: {
+        type: '',
+        lesson: [],
+        reason: [],
+      },
       inGroup: modelValue.value._id,
     },
     open: true,
     answer: '',
-  } as unknown as {
+  } as {
     problem: AllProblem
     open: boolean
   })
@@ -235,7 +248,11 @@ const gardes = [
           </ElInput>
         </ElFormItem>
         <ElFormItem label="信息描述">
-          <PContentEditor v-model="modelValue.prompts" class="full-width" prompt />
+          <PContentEditor
+            v-model="modelValue.prompts"
+            class="full-width"
+            prompt
+          />
         </ElFormItem>
         <Transition
           enter-active-class="animate__animated animate__fadeIn"

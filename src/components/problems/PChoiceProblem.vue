@@ -6,12 +6,12 @@ import type {
   SingleChoiceProblem,
   MultipleChoiceProblem,
 } from '@/../@types/problem'
-import { readonly, ref, toRefs, unref } from 'vue'
+import { readonly, ref, toRefs } from 'vue'
 import { ElRadio, ElCheckbox, ElRow, ElCol, ElCard } from 'element-plus'
 import PContent from '../content/PContent.vue'
 import { useStatusStore } from '@/stores/status'
 import { getOrderText } from '@/utils/orderResult'
-import type { Content, ImageContent, TextContent } from '@/../@types/content'
+import type { ImageContent, TextContent } from '@/../@types/content'
 import { useWindowSize } from '@vueuse/core'
 import { useSettingsStore } from '@/stores/settings'
 
@@ -44,10 +44,7 @@ settings.$subscribe(() => {
   }
 })
 
-console.log('Show Quote', settings.defaults.showQuote)
-
 if (settings.defaults.showQuote) {
-  console.log('Use It')
   const idx = problem.value.content.findLastIndex((x) => x.type === 'text')
   if (problem.value.content[idx].type === 'text') {
     if (
@@ -112,7 +109,7 @@ function useAnswer() {
       } else if (content.type === 'image') {
         const img = new Image()
         img.src = content.src
-        length += img.width / 10
+        length += img.width / (status.fontSize * 2.4)
       }
     })
     if (length * 12 > (size.width.value * 0.2) / 2) {

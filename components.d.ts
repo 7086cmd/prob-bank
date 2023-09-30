@@ -36,6 +36,7 @@ declare module 'vue' {
     PMaterialEdit: typeof import('./src/components/content/PMaterialEdit.vue')['default']
     POptionEdit: typeof import('./src/components/problems/POptionEdit.vue')['default']
     PPaper: typeof import('./src/components/paper/PPaper.vue')['default']
+    PPaperAnswer: typeof import('./src/components/paper/PPaperAnswer.vue')['default']
     PPaperElement: typeof import('./src/components/paper/PPaperElement.vue')['default']
     PParagraph: typeof import('./src/components/content/PParagraph.vue')['default']
     PProblem: typeof import('./src/components/problems/PProblem.vue')['default']

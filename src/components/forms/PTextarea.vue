@@ -64,3 +64,25 @@ function useSave() {
     </ElCard>
   </div>
 </template>
+
+<style>
+.empasis {
+  text-emphasis: dot;
+  text-emphasis-position: under;
+  font-style: normal;
+}
+
+.wave {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+}
+
+.underline {
+  text-decoration-line: underline;
+}
+
+.double-underline {
+  text-decoration-line: underline;
+  text-decoration-style: double;
+}
+</style>

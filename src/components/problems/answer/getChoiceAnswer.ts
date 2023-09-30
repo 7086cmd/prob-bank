@@ -3,23 +3,52 @@ import type {
   MultipleChoiceProblem,
   JudgeProblem,
 } from '@/../@types/problem.d'
+import type { Content } from '@/../@types/content'
 
 export function getChoiceAnswerPerProblem(
   problem: SingleChoiceProblem | MultipleChoiceProblem | JudgeProblem
-) {
+): Content[] {
   const { answer } = problem
   if (problem.type === 'single-choice') {
-    return String.fromCharCode((answer as number) + 65)
-  } else if (problem.type === 'multiple-choice' && problem.answer.length === 0) {
-    return '$\\varnothing$'
+    return [
+      {
+        type: 'text',
+        content: String.fromCharCode((answer as number) + 65),
+      },
+    ]
+  } else if (
+    problem.type === 'multiple-choice' &&
+    problem.answer.length === 0
+  ) {
+    return [
+      {
+        type: 'formula',
+        content: '\\varnothing',
+      },
+    ]
   } else if (problem.type === 'multiple-choice') {
-    return (answer as number[])
-      .map((x) => String.fromCharCode(x + 65))
-      .sort((a, b) => a.charCodeAt(0) - b.charCodeAt(0))
-      .join('')
+    return [
+      {
+        type: 'text',
+        content: (answer as number[])
+          .map((x) => String.fromCharCode(x + 65))
+          .sort((a, b) => a.charCodeAt(0) - b.charCodeAt(0))
+          .join(''),
+      },
+    ]
   } else if (problem.type === 'judge') {
-    return answer ? 'T' : 'F'
+    return [
+      {
+        type: 'text',
+        content: answer ? 'T' : 'F',
+      },
+    ]
   } else {
-    return 'Unsupported Problem Type'
+    return [
+      {
+        type: 'text',
+        content: 'Unsupported Problem Type',
+      },
+    ]
   }
 }

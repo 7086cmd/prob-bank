@@ -1,19 +1,24 @@
-import type { BlankContent } from '@/../@types/content'
+import type { BlankContent, Content } from '@/../@types/content'
 import type { BlankProblem } from '@/../@types/problem'
-import { c2md } from '@/utils/c2md'
 
-export function getBlankAnswerPerProblem(problem: BlankProblem) {
+export function getBlankAnswerPerProblem(problem: BlankProblem): Content[] {
   const content = problem.content.filter(
     (item) => item.type === 'blank'
   ) as BlankContent[]
-  let answer = ''
+  const answer = [] as Content[]
   content.forEach((item: BlankContent) => {
-    const result = c2md(item.answer)
-    if (result.startsWith('$\\underline{') && result.endsWith('}$')) {
-      answer += '$' + result.slice(12, -2) + '$；'
-    } else {
-      answer += result + '；'
-    }
+    answer.push(...item.answer.map(x => {
+      if (x.type === 'formula') {
+        if (x.content.startsWith('\\underline{') && x.content.endsWith('}')) {
+          x.content = x.content.slice(11, -1)
+        }
+      }
+      return x
+    }))
+    answer.push({
+      type: 'text',
+      content: '；',
+    })
   })
   return answer
 }

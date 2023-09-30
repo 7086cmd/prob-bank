@@ -63,7 +63,7 @@ watch(editorVal, () => {
 
 <style scoped>
 .normal {
-  font-family: 'Source Han Sans' !important;
+  font-family: 'Source Han Sans';
   font-size: v-bind(fontSize + 'px');
   word-break: break-all;
 }
@@ -149,5 +149,25 @@ table .mtight {
   box-sizing: border-box !important;
   border-color: #000000 !important;
   /* border-bottom-width: 0.02em !important; */
+}
+
+.empasis {
+  text-emphasis: dot;
+  text-emphasis-position: under;
+  font-style: normal;
+}
+
+.wave {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+}
+
+.underline {
+  text-decoration-line: underline;
+}
+
+.double-underline {
+  text-decoration-line: underline;
+  text-decoration-style: double;
 }
 </style>
