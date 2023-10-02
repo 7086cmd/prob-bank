@@ -15,20 +15,26 @@ const content = toRef(props, 'content')
   <div style="text-align: center; margin: 0px auto">
     <table class="table-fixed caption-top border-collapse">
       <tbody>
-        <tr v-for="item in content" :key="item.toString()">
+        <tr v-for="(item, row) in content" :key="row">
           <td
-            v-for="cell in item"
-            class="border border-slate-300 px-6 py-1"
-            :key="cell.toString()"
+            v-for="(cell, col) in item"
+            :class="[
+              'border',
+              'border-slate-300',
+              'px-6',
+              'py-1',
+              cell.type === 'header' ? 'border-header' : 'border-cell',
+            ]"
+            :key="col"
             :rowspan="cell.rowspan"
             :colspan="cell.colspan"
             style="text-align: center"
           >
-            <th v-if="cell.type === 'header'">
-              <PContent :content="cell.content" />
-            </th>
+            <span v-if="cell.type === 'header'">
+              <PContent :content="cell.content" class="border-header" />
+            </span>
             <span v-else>
-              <PContent :content="cell.content" />
+              <PContent :content="cell.content" class="border-cell" />
             </span>
           </td>
         </tr>
@@ -36,3 +42,28 @@ const content = toRef(props, 'content')
     </table>
   </div>
 </template>
+
+<style scoped>
+.border-cell {
+  border: 1px solid #d5d5d5 !important;
+}
+
+.border-header {
+  background-color: #efefef !important;
+  border: 1px solid #d5d5d5 !important;
+  font-family: 'Ubuntu', 'Source Han Sans' !important;
+}
+
+.border {
+  border-radius: 2px;
+}
+
+@media print {
+  .border {
+    border: 1px solid #000000 !important;
+    background-color: #ffffff !important;
+    font-family: 'Source Han Serif' !important;
+    border-radius: 0%;
+  }
+}
+</style>

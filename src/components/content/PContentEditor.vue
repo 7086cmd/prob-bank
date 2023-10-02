@@ -42,6 +42,7 @@ import PMaterialEdit from './PMaterialEdit.vue'
 import PContent from './PContent.vue'
 import { transformTo, transformFrom } from './transformer'
 import PArticleEdit from './PArticleEdit.vue'
+import PTableEdit from './PTableEdit.vue'
 
 const props = defineProps<{
   modelValue: Content[]
@@ -124,9 +125,9 @@ const contentTypes = [
     icon: InsertTable,
     base: {
       type: 'table',
-      content: [],
+      content: [[]],
     } as TableContent,
-    disabled: true,
+    disabled: disables?.value?.includes('table'),
     type: 'info',
     description:
       '表格，不是 Markdown 格式的表格，支持合并单元格等复杂操作，目前正在开发。',
@@ -157,6 +158,7 @@ const contentTypes = [
         align: 'left',
       },
     },
+    disabled: disables?.value?.includes('article'),
   },
 ] as Array<{
   name: string
@@ -321,13 +323,16 @@ const preview = ref(false)
               v-else-if="contents[idx].type === 'article'"
               v-model="(contents[idx] as ArticleContent).article.content"
               v-model:title="(contents[idx] as ArticleContent).article.title"
-              v-model:author="
-                (contents[idx] as ArticleContent).article.author
-              "
+              v-model:author="(contents[idx] as ArticleContent).article.author"
               v-model:language="
                 (contents[idx] as ArticleContent).article.language
               "
               v-model:align="(contents[idx] as ArticleContent).article.align"
+            />
+            <PTableEdit
+              v-else-if="contents[idx].type === 'table'"
+              v-model="(contents[idx] as TableContent).content"
+              :editable="true"
             />
           </div>
         </ElCard>

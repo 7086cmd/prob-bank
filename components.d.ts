@@ -7,14 +7,14 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
-    ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
+    Article: typeof import('./src/components/content/icons/Article.vue')['default']
     ElTag: typeof import('element-plus/es')['ElTag']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
     IconEcosystem: typeof import('./src/components/icons/IconEcosystem.vue')['default']
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
+    Markdown: typeof import('./src/components/content/icons/Markdown.vue')['default']
     PAnswerProblem: typeof import('./src/components/problems/PAnswerProblem.vue')['default']
     PArticle: typeof import('./src/components/content/PArticle.vue')['default']
     PArticleEdit: typeof import('./src/components/content/PArticleEdit.vue')['default']
@@ -44,6 +44,8 @@ declare module 'vue' {
     PProblemGroup: typeof import('./src/components/problem-group/PProblemGroup.vue')['default']
     PSubProblem: typeof import('./src/components/problems/PSubProblem.vue')['default']
     PTable: typeof import('./src/components/content/PTable.vue')['default']
+    PTableCellEdit: typeof import('./src/components/content/PTableCellEdit.vue')['default']
+    PTableEdit: typeof import('./src/components/content/PTableEdit.vue')['default']
     PText: typeof import('./src/components/content/PText.vue')['default']
     PTextarea: typeof import('./src/components/content/PTextarea.vue')['default']
     PTextEdit: typeof import('./src/components/content/PTextEdit.vue')['default']

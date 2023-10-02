@@ -25,7 +25,9 @@ export default defineConfig({
     autoImport({
       resolvers: [ElementPlusResolver(), IconsResolver()],
     }),
-    icons(),
+    icons({
+      autoInstall: true,
+    }),
     vueMarkdown({
       markdownItSetup(md) {
         md.use(require('markdown-it-sub'))
