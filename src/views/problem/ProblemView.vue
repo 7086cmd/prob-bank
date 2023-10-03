@@ -29,6 +29,7 @@ const store = ref<AllProblem[]>([])
 
 const origin_filter = ref('')
 const subject_filter = ref<string[]>(['Math', 'Physics', 'Chemistry'])
+const content_filter = ref('')
 
 const show = ref(false)
 
@@ -40,6 +41,13 @@ watch(origin_filter, () => {
 watch(subject_filter, () => {
   show.value = false
   show.value = true
+})
+
+watch(content_filter, () => {
+  show.value = false
+  setTimeout(() => {
+    show.value = true
+  }, 100)
 })
 
 watch(show, () => {
@@ -140,6 +148,12 @@ const subjects = [
           </ElCol>
         </ElRow>
         <ElRow class="py-2">
+          <ElCol :span="4">内容索引</ElCol>
+          <ElCol :span="20">
+            <ElInput v-model="content_filter" placeholder="请输入关键词" />
+          </ElCol>
+        </ElRow>
+        <ElRow class="py-2">
           <ElCol :span="4">科目索引</ElCol>
           <ElCol :span="18">
             <ElCheckboxGroup v-model="subject_filter">
@@ -205,6 +219,7 @@ const subjects = [
           :_id="item._id"
           :order="index + 1"
           :level="0"
+          :filter="content_filter"
           mode="display"
         />
       </div>

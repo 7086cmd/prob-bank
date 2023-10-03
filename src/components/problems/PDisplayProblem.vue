@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /* global defineProps */
 import type { AllProblem } from '@/../@types/problem'
-import { toRefs, ref } from 'vue'
+import { toRefs, ref, watch } from 'vue'
 import PProblem from './PProblem.vue'
 import { ElResult, ElSkeleton, ElCard } from 'element-plus'
 import { useRouter } from 'vue-router'
@@ -17,9 +17,10 @@ const props = defineProps<{
   order: number
   paper?: boolean
   groupPreview?: boolean
+  filter?: string
 }>()
 
-const { _id, mode, order, paper, groupPreview } = toRefs(props)
+const { _id, mode, order, paper, groupPreview, filter } = toRefs(props)
 
 const problem = ref<AllProblem | null>(null)
 const loaded = ref(false)
@@ -28,10 +29,44 @@ const errText = ref('')
 const statusCode = ref(200)
 const d = ref({})
 const answer = ref<Content[]>([])
+const filtered = ref(false)
+
+watch(
+  () => filter?.value,
+  () => {
+    console.log('filter value changed')
+    filtered.value = problem.value?.content
+      .filter((x) => x.type === 'text')
+      .map((x) => (x.type === 'text' ? x.content : ''))
+      .join('')
+      .includes(filter?.value as string) as boolean
+    problem.value?.content.map((x) => {
+      if (x.type === 'text' && filter?.value)
+        x.content = x.content.replaceAll(
+          filter?.value as string,
+          `==${filter?.value}==`
+        )
+      return x
+    })
+  }
+)
 
 getProblem(_id.value)
   .then((response) => {
     problem.value = response as AllProblem
+    filtered.value = problem.value.content
+      .filter((x) => x.type === 'text')
+      .map((x) => (x.type === 'text' ? x.content : ''))
+      .join('')
+      .includes(filter?.value as string)
+    problem.value?.content.map((x) => {
+      if (x.type === 'text' && filter?.value)
+        x.content = x.content.replaceAll(
+          filter?.value as string,
+          `==${filter?.value}==`
+        )
+      return x
+    })
     return getAnswerById(_id.value)
   })
   .then((response) => {
@@ -63,7 +98,8 @@ getProblem(_id.value)
     <transition enter-active-class="animate__animated animate__fadeIn">
       <div v-if="loaded && !error">
         <PProblem
-          :problem="(problem as AllProblem)"
+          :problem="problem as AllProblem"
+          v-if="filtered || !filter"
           :mode="mode"
           :order="order"
           :level="0"
@@ -73,7 +109,7 @@ getProblem(_id.value)
           "
           :in-paper="paper"
           :group-preview="groupPreview"
-          :answer="(answer as Content[])"
+          :answer="answer as Content[]"
         />
       </div>
     </transition>

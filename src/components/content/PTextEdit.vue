@@ -22,23 +22,43 @@ const { fontSize } = toRefs(status)
 
 const emits = defineEmits(['update:modelValue'])
 
+function repWithKey(key: string, tag: string, classNames?: string[]) {
+  return function (str: string) {
+    const list = str.split(key)
+    return list
+      .map((item, idx) =>
+        idx % 2 === 0
+          ? item
+          : `<${tag}${
+              classNames ? ` class="${classNames.join(' ')}"` : ''
+            }>${item}</${tag}>`
+      )
+      .join('')
+  }
+}
+
 const md = new MarkdownIt({
   html: true,
   breaks: false,
   typographer: true,
 }).use(katex)
 
-const html = ref(
-  md.renderInline(
-    modelValue.value.replaceAll('。', science.value ? '。' : '．')
-  )
-)
+function compile(str: string) {
+  const mark = repWithKey('==', 'mark')
+  const sub = repWithKey('~', 'sub')
+  const sup = repWithKey('^', 'sup')
+  const under = repWithKey('++', 'u')
+  const wave = repWithKey('+~+', 'span', ['wave'])
+  const empasis = repWithKey('+*+', 'span', ['empasis'])
+  const string = mark(sub(sup(under(wave(empasis(str))))))
+  return md.renderInline(string.replaceAll('。', science.value ? '。' : '．'))
+}
+
+const html = ref(compile(modelValue.value))
 const editorVal = ref(modelValue.value)
 
 watch(editorVal, () => {
-  html.value = md.renderInline(
-    editorVal.value.replaceAll('。', science.value ? '。' : '．')
-  )
+  html.value = compile(modelValue.value)
   emits(
     'update:modelValue',
     editorVal.value.replaceAll('。', science.value ? '。' : '．')
