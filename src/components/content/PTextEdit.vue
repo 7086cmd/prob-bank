@@ -64,6 +64,12 @@ watch(editorVal, () => {
     editorVal.value.replaceAll('。', science.value ? '。' : '．')
   )
 })
+
+const font = ref(status.fontSet.displayFontFamily)
+
+status.$subscribe(() => {
+  font.value = status.fontSet.displayFontFamily
+})
 </script>
 
 <template>
@@ -83,7 +89,7 @@ watch(editorVal, () => {
 
 <style scoped>
 .normal {
-  font-family: 'Source Han Sans';
+  font-family: v-bind(font);
   font-size: v-bind(fontSize + 'px');
   word-break: break-all;
 }

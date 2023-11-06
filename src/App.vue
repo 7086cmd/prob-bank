@@ -58,7 +58,6 @@ const status = useStatusStore()
 const router = useRouter()
 const route = useRoute()
 const paper = usePaperStore()
-
 const darkmode = useDark()
 
 function showSizeChange() {
@@ -125,7 +124,6 @@ onMounted(() => {
     | 'teacher'
     | 'description'
     | 'answer'
-  // console.log(method)
   if (method) {
     const taskId = params.get('id') as string
     status.useDisplayMode(method)

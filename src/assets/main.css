@@ -8,10 +8,6 @@
     page-break-before: avoid;
   }
 
-  .print-invisible {
-    /* display: none; */
-  }
-
   .print-visible {
     display: block;
   }
@@ -51,10 +47,6 @@
 
   .origin {
     font-family: 'Ubuntu', 'Source Han Sans';
-  }
-
-  .infor {
-    /* display: none !important; */
   }
 
   body {

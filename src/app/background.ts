@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   app,
   BrowserWindow,
@@ -31,6 +30,7 @@ import {
   getProblemGroup,
 } from './apis/problem-group'
 import type { ProblemGroup } from '@/../@types/problem-group'
+import { getFonts } from 'font-list'
 
 const appServer = new Koa()
 const router = new KoaRouter()
@@ -407,6 +407,11 @@ app.whenReady().then(() => {
 
   baseWindow.setWindowButtonVisibility(true)
 
+  ipcMain.on('getFonts', async (_event, options) => {
+    const fonts = await getFonts(options)
+    baseWindow.webContents.send('getFonts', fonts)
+  })
+
   ipcMain.on('request', async (event, request: Request) => {
     const connection = await MongoClient.connect('mongodb://127.0.0.1:27017')
     const db = connection.db('prob-bank')
@@ -526,9 +531,6 @@ app.whenReady().then(() => {
                     break
                   case 'answer':
                     mode = '答案版'
-                    break
-                  case 'wrong':
-                    mode = '错题本专用版'
                     break
                   default:
                     mode = '未知'

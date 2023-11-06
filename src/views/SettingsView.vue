@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PFormulaEdit from '@/components/content/PFormulaEdit.vue'
 import { useSettingsStore } from '@/stores/settings'
+import { useStatusStore } from '@/stores/status'
 import {
   ElForm,
   ElFormItem,
@@ -10,7 +11,50 @@ import {
   ElSwitch,
   ElCard,
 } from 'element-plus'
-import { ref, watch } from 'vue'
+import { ref, watch, reactive } from 'vue'
+
+const status = useStatusStore()
+
+const fonts = ref<
+  {
+    label: string
+    value: string
+  }[]
+>([])
+const fetched = ref(false)
+
+const fonting = reactive({
+  preview: {
+    family: status.fontSet.displayFontFamily,
+    size: status.fontSet.displayFontSize,
+  },
+  print: {
+    family: status.fontSet.printFontFamily,
+    size: status.fontSet.printFontSize,
+  },
+})
+
+watch(
+  fonting,
+  () => {
+    status.fontSet.displayFontFamily = fonting.preview.family
+    status.fontSet.displayFontSize = fonting.preview.size
+    status.fontSet.printFontFamily = fonting.print.family
+    status.fontSet.printFontSize = fonting.print.size
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+)
+
+window.probbank.getFonts({ disableQuoting: true }).then((res) => {
+  fonts.value = res.map((x) => ({
+    label: x,
+    value: x,
+  }))
+  fetched.value = true
+})
 
 const settings = useSettingsStore()
 
@@ -54,15 +98,61 @@ watch(chemistryDotPeriod, () => {
 
 <template>
   <p class="text-2xl py-4">设置</p>
-  <ElForm>
+  <ElForm v-loading="!fetched">
     <ElFormItem label="常规">
       <ElCard shadow="hover" class="card">
         <ElForm>
-          <ElFormItem label="选择题">
+          <ElFormItem label="选择" class="py-2">
             <ElCard shadow="hover" class="card">
               <ElForm>
                 <ElFormItem label="括号">
                   <ElSwitch v-model="quote" />
+                </ElFormItem>
+              </ElForm>
+            </ElCard>
+          </ElFormItem>
+          <ElFormItem label="字体" class="py-2">
+            <ElCard shadow="hover" class="card">
+              <ElForm>
+                <ElFormItem label="预览字体" class="py-2">
+                  <ElSelect
+                    filterable
+                    v-model="fonting.preview.family"
+                    style="width: 100%"
+                  >
+                    <ElOption
+                      v-for="font in fonts"
+                      :key="font.value"
+                      :value="font.value"
+                    >
+                      <span :style="{ fontFamily: font.value }">
+                        {{ font.label }}
+                      </span>
+                    </ElOption>
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="字体大小" class="py-2">
+                  <ElInput v-model.number="fonting.preview.size" />
+                </ElFormItem>
+                <ElFormItem label="打印字体" class="py-2">
+                  <ElSelect
+                    filterable
+                    v-model="fonting.print.family"
+                    style="width: 100%"
+                  >
+                    <ElOption
+                      v-for="font in fonts"
+                      :key="font.value"
+                      :value="font.value"
+                    >
+                      <span :style="{ fontFamily: font.value }">
+                        {{ font.label }}
+                      </span>
+                    </ElOption>
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="字体大小" class="py-2">
+                  <ElInput v-model.number="fonting.print.size" />
                 </ElFormItem>
               </ElForm>
             </ElCard>

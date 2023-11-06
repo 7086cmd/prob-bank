@@ -7,6 +7,7 @@ import * as sub from 'markdown-it-sub'
 import * as sup from 'markdown-it-sup'
 import * as mark from 'markdown-it-mark'
 import 'katex/contrib/mhchem/mhchem.js'
+import type { IOptions, FontList } from 'font-list'
 
 contextBridge.exposeInMainWorld('probbank', {
   request(request: {
@@ -77,6 +78,14 @@ contextBridge.exposeInMainWorld('probbank', {
       displayMode: false,
       throwOnError: false,
       errorColor: '#cc0000',
+    })
+  },
+  getFonts(options: IOptions) {
+    return new Promise<FontList>((resolve) => {
+      ipcRenderer.send('getFonts', options)
+      ipcRenderer.once('getFonts', (_, fonts) => {
+        resolve(fonts)
+      })
     })
   },
 })
