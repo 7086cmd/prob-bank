@@ -15,12 +15,28 @@ import { ref, watch, reactive } from 'vue'
 
 const status = useStatusStore()
 
-const fonts = ref<
+const fontsPreview = ref<
   {
     label: string
     value: string
   }[]
->([])
+>([
+  {
+    label: '默认字体',
+    value: 'Source Han Sans'
+  }
+])
+const fontsPrint = ref<
+  {
+    label: string
+    value: string
+  }[]
+>([
+  {
+    label: '默认字体',
+    value: 'Source Han Serif'
+  }
+])
 const fetched = ref(false)
 
 const fonting = reactive({
@@ -49,10 +65,12 @@ watch(
 )
 
 window.probbank.getFonts({ disableQuoting: true }).then((res) => {
-  fonts.value = res.map((x) => ({
+  const fonts = res.map((x) => ({
     label: x,
     value: x,
   }))
+  fontsPreview.value.push(...fonts)
+  fontsPrint.value.push(...fonts)
   fetched.value = true
 })
 
@@ -121,7 +139,7 @@ watch(chemistryDotPeriod, () => {
                     style="width: 100%"
                   >
                     <ElOption
-                      v-for="font in fonts"
+                      v-for="font in fontsPreview"
                       :key="font.value"
                       :value="font.value"
                     >
@@ -141,7 +159,7 @@ watch(chemistryDotPeriod, () => {
                     style="width: 100%"
                   >
                     <ElOption
-                      v-for="font in fonts"
+                      v-for="font in fontsPrint"
                       :key="font.value"
                       :value="font.value"
                     >
