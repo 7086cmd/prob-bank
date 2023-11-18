@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-// @ts-nocheck
 import {
   ElContainer,
   ElAside,
@@ -75,6 +74,10 @@ function showSizeChange() {
 const { width, height } = useWindowSize()
 
 const wrong = ref(false)
+
+watch(wrong, () => {
+  status.useWrongDisplay(wrong.value)
+})
 const mode = ref('student')
 
 const modes = [
@@ -154,7 +157,7 @@ function usePrintToPDF(
   })
   window.probbank.print(
     route.name === 'paper' ? paper.metadata.name : '',
-    mode,
+    mode as 'student' | 'teacher' | 'description' | 'answer' | 'wrong',
     () => {}
   )
   window.probbank.on('print-step', () => {
@@ -408,7 +411,7 @@ const useWindowControls = (
                             text
                             bg
                             size="small"
-                            @click="usePrintToPDF(mode, wrong)"
+                            @click="usePrintToPDF(mode as 'student' | 'teacher' | 'description' | 'answer' | 'wrong')"
                           >
                             打印
                           </ElButton>

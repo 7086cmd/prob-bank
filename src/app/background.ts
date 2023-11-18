@@ -32,10 +32,16 @@ import {
 import type { ProblemGroup } from '@/../@types/problem-group'
 import { getFonts, type FontList } from 'font-list'
 
-const fonts = [] as FontList
+let fonts = [] as FontList
 
 const appServer = new Koa()
 const router = new KoaRouter()
+
+getFonts({
+  disableQuoting: true,
+}).then((x) => {
+  fonts = x
+})
 
 appServer.use(KoaCors({ origin: '*' }))
 appServer.use(KoaBodyparser())
@@ -410,8 +416,8 @@ app.whenReady().then(() => {
   baseWindow.setWindowButtonVisibility(true)
 
   ipcMain.on('getFonts', async (_event, options) => {
-    const fontlist = fonts.length === 0 ? await getFonts(options) : fonts
-    baseWindow.webContents.send('getFonts', fontlist)
+    fonts = fonts.length === 0 ? await getFonts(options) : fonts
+    baseWindow.webContents.send('getFonts', fonts)
   })
 
   ipcMain.on('request', async (event, request: Request) => {

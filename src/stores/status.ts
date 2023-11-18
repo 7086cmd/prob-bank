@@ -28,9 +28,10 @@ export const useStatusStore = defineStore('status', {
       fontSet: {
         displayFontSize: 14,
         displayFontFamily: '',
-        printFontSize: 10,
+        printFontSize: 12,
         printFontFamily: '',
       },
+      wrongDisplay: true
     }
   },
   actions: {
@@ -73,5 +74,8 @@ export const useStatusStore = defineStore('status', {
     }) {
       this.fontSet = fontSet
     },
+    useWrongDisplay(status: boolean) {
+      this.wrongDisplay = status
+    }
   },
 })

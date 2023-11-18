@@ -16,7 +16,7 @@ export interface ProbBankActions {
   inElectron: boolean
   print: (
     name: string,
-    version: 'student' | 'answer' | 'description' | 'teacher',
+    version: 'student' | 'answer' | 'description' | 'teacher' | 'wrong',
     cb: (status: string, step: string) => void
   ) => void,
   on: <T>(channel: string, listener: (...args: any[]) => void) => T

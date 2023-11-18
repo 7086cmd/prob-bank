@@ -200,7 +200,7 @@ const showWrong = ref(false)
           :type="mode"
           :problem="problem"
           :order="order"
-          :level="(level as 0 | 1)"
+          :level="level as 0 | 1"
           :preview="preview"
         />
         <span v-else>没有这种类型的题目</span>
@@ -280,6 +280,41 @@ const showWrong = ref(false)
                 @click="handle(_id as string)"
               />
             </ElSpace>
+            <div
+              v-if="
+                status.wrongDisplay &&
+                Boolean(problem.wrong) &&
+                Boolean(problem.wrong?.type)
+              "
+              class="py-2 px-4"
+              style="text-align: left"
+            >
+              <p class="text-xl">错题</p>
+              <ElForm label-position="right">
+                <ElFormItem label="分类">
+                  <PContent
+                    :content="[
+                      {
+                        type: 'text',
+                        content: `${getWrongType(
+                          problem.wrong?.type as string
+                        )}`,
+                      },
+                    ]"
+                  />
+                </ElFormItem>
+                <ElFormItem label="原因">
+                  <PContent :content="problem.wrong?.reason as Content[]" />
+                </ElFormItem>
+                <ElFormItem label="总结">
+                  <PContent :content="problem.wrong?.lesson as Content[]" />
+                </ElFormItem>
+                <ElFormItem label="答案">
+                  <PContent :content="answer as Content[]" />
+                </ElFormItem>
+                <ElFormItem label="重做" />
+              </ElForm>
+            </div>
           </div>
         </transition>
       </ElCard>
@@ -313,8 +348,8 @@ const showWrong = ref(false)
         v-else-if="problem.type === 'answer'"
         :type="mode"
         :problem="problem"
-        :order="(order as number)"
-        :level="(level as 0 | 1)"
+        :order="order as number"
+        :level="level as 0 | 1"
         :preview="preview"
       />
       <span v-else>没有这种类型的题目</span>
@@ -326,7 +361,7 @@ const showWrong = ref(false)
         "
       >
         <ElCol :span="3" class="black">答案</ElCol>
-        <ElCol :span="21"><PContent :content="(answer as Content[])" /></ElCol>
+        <ElCol :span="21"><PContent :content="answer as Content[]" /></ElCol>
       </ElRow>
       <ElRow v-if="status.dispMode === 'description' && level === 0">
         <ElCol :span="3" class="black">解析</ElCol>
@@ -336,15 +371,16 @@ const showWrong = ref(false)
       </ElRow>
       <div
         v-if="
-          status.dispMode === 'wrong' &&
-          level === 0 &&
+          status.wrongDisplay &&
           Boolean(problem.wrong) &&
           Boolean(problem.wrong?.type)
         "
+        class="py-2 px-4"
+        style="text-align: left"
       >
-        <ElRow>
-          <ElCol :span="3" class="black">错题分类</ElCol>
-          <ElCol :span="21">
+        <p class="text-xl">错题</p>
+        <ElForm label-position="right">
+          <ElFormItem label="分类">
             <PContent
               :content="[
                 {
@@ -353,34 +389,18 @@ const showWrong = ref(false)
                 },
               ]"
             />
-          </ElCol>
-        </ElRow>
-        <ElRow>
-          <ElCol :span="3" class="black">错题原因</ElCol>
-          <ElCol :span="21">
-            <PContent :content="(problem.wrong?.reason as Content[])" />
-          </ElCol>
-        </ElRow>
-        <ElRow>
-          <ElCol :span="3" class="black">错题总结</ElCol>
-          <ElCol :span="21">
-            <PContent :content="(problem.wrong?.lesson as Content[])" />
-          </ElCol>
-        </ElRow>
-        <ElRow>
-          <ElCol :span="3" class="black">错题答案</ElCol>
-          <ElCol :span="21">
-            <PContent :content="(answer as Content[])" />
-          </ElCol>
-        </ElRow>
-        <ElRow>
-          <ElCol :span="3" class="black">错题重做</ElCol>
-          <ElCol :span="21">
-            <PContent
-              :content="[{ type: 'text', content: '请做在上面题目的空格中' }]"
-            />
-          </ElCol>
-        </ElRow>
+          </ElFormItem>
+          <ElFormItem label="原因">
+            <PContent :content="problem.wrong?.reason as Content[]" />
+          </ElFormItem>
+          <ElFormItem label="总结">
+            <PContent :content="problem.wrong?.lesson as Content[]" />
+          </ElFormItem>
+          <ElFormItem label="答案">
+            <PContent :content="answer as Content[]" />
+          </ElFormItem>
+          <ElFormItem label="重做" />
+        </ElForm>
       </div>
     </div>
     <transition
@@ -402,7 +422,10 @@ const showWrong = ref(false)
             />
             <PContent
               :content="[
-                { type: 'text', content: getWrongType(problem.wrong?.type as string) },
+                {
+                  type: 'text',
+                  content: getWrongType(problem.wrong?.type as string),
+                },
               ]"
               title
             />
@@ -430,7 +453,7 @@ const showWrong = ref(false)
             />
             <PContent
               v-if="problem.wrong?.lesson"
-              :content="problem.wrong?.reason"
+              :content="problem.wrong?.lesson"
               :science="
                 ['Chemistry', 'Physics', 'Mathmatics'].includes(
                   problem.data.subject
@@ -445,7 +468,6 @@ const showWrong = ref(false)
           class="py-4"
         >
           <ElButton
-            v-if="problem.inGroup"
             text
             bg
             round
@@ -559,7 +581,7 @@ const showWrong = ref(false)
           :type="mode"
           :problem="problem"
           :order="order"
-          :level="(level as 0 | 1)"
+          :level="level as 0 | 1"
           :preview="preview"
         />
         <span v-else>没有这种类型的题目</span>
@@ -618,7 +640,7 @@ const showWrong = ref(false)
             <ElCol :span="11">
               <ElFormItem label="答案">
                 <PContent
-                  :content="(answer as Content[])"
+                  :content="answer as Content[]"
                   :science="
                     ['Chemistry', 'Physics', 'Mathmatics'].includes(
                       problem.data.subject

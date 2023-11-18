@@ -22,11 +22,6 @@ export const wrongTypes = [
     label: '审题性错误',
   },
   {
-    value: 'calculation',
-    subjects: ['Math', 'Physics', 'Chemistry'],
-    label: '计算性错误',
-  },
-  {
     value: 'concept',
     subjects: ['Math', 'Physics', 'Chemistry', 'English'],
     label: '概念性错误',
@@ -37,14 +32,9 @@ export const wrongTypes = [
     label: '步骤性错误',
   },
   {
-    value: 'knowledge',
-    subjects: allSubjects,
-    label: '知识性错误',
-  },
-  {
-    value: 'careless',
-    subjects: allSubjects,
-    label: '粗心性错误',
+    value: 'ability',
+    subjects: ['Math', 'Physics', 'Chemistry'],
+    label: '能力性错误',
   },
   {
     value: 'other',
