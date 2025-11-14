@@ -1,17 +1,8 @@
 <script setup lang="ts">
 /* global defineProps */
 import type { Content } from '@/../@types/content'
-import PImage from './PImage.vue'
-import PTableEdit from './PTableEdit.vue'
-import PText from './PText.vue'
 import { toRefs } from 'vue'
-import PBlank from './PBlank.vue'
-import PTextEdit from './PTextEdit.vue'
-import PFormulaEdit from './PFormulaEdit.vue'
-import PMaterial from './PMaterial.vue'
-import { ElDivider } from 'element-plus'
-import PProblem from '../problems/PProblem.vue'
-import PArticle from './PArticle.vue'
+import ContentItem from './ContentItem.vue'
 
 const props = defineProps<{
   content: Content[]
@@ -40,7 +31,6 @@ const {
 if (typeof content.value !== 'object') content.value = []
 
 // split array with `divider` element
-
 const contents = content.value.reduce(
   (acc, cur) => {
     if (cur.type === 'divider') {
@@ -57,117 +47,37 @@ const contents = content.value.reduce(
 <template>
   <slot name="prepend" />
   <span v-if="contents.length === 1">
-      <span v-for="(item, idx) in content" :key="idx" class="content">
-        <PTextEdit
-          v-if="item.type === 'text'"
-          :class="prompt ? 'quote' : ''"
-          :model-value="item.content"
-          :editable="editable"
-          :answer="answer"
-          :fontmode="fontmode"
-          :english="english"
-          :italic="fullItalic"
-          :prompt="prompt"
-          :title="title"
-          :author="author"
-          :science="science"
-        />
-        <PText
-          v-else-if="item.type === 'textarea'"
-          :content="item.content"
-          mode="area"
-          :english="english"
-          :science="science"
-        />
-        <PFormulaEdit
-          v-else-if="item.type === 'formula'"
-          :model-value="item.content"
-          :editable="editable"
-          :answer="answer"
-        />
-        <PImage v-else-if="item.type === 'image'" :src="item.src" />
-        <PTableEdit
-          v-else-if="item.type === 'table'"
-          :model-value="item.content"
-          :english="english"
-          :editable="false"
-        />
-        <!-- eslint-disable-next-line no-irregular-whitespace -->
-        <PBlank
-          v-else-if="item.type === 'blank'"
-          :content="item"
-          :english="english"
-        />
-        <PMaterial
-          v-else-if="item.type === 'material'"
-          :material="item.material"
-        />
-        <ElDivider v-else-if="item.type === 'divider'" />
-        <PProblem
-          v-else-if="item.type === 'problem'"
-          :problem="item.problem"
-          mode="display"
-          :level="0"
-        />
-        <PArticle v-else-if="item.type === 'article'" :article="item.article" />
-      </span>
+    <ContentItem
+      v-for="(item, idx) in content"
+      :key="idx"
+      :item="item"
+      :editable="editable"
+      :answer="answer"
+      :prompt="prompt"
+      :fontmode="fontmode"
+      :english="english"
+      :full-italic="fullItalic"
+      :title="title"
+      :author="author"
+      :science="science"
+    />
   </span>
   <div v-else>
     <div v-for="(ctns, id) in contents" :key="id">
-      <span v-for="(item, idx) in ctns" :key="idx" class="content">
-        <PTextEdit
-          v-if="item.type === 'text'"
-          :class="prompt ? 'quote' : ''"
-          :model-value="item.content"
-          :editable="editable"
-          :answer="answer"
-          :fontmode="fontmode"
-          :english="english"
-          :italic="fullItalic"
-          :prompt="prompt"
-          :title="title"
-          :author="author"
-          :science="science"
-        />
-        <PText
-          v-else-if="item.type === 'textarea'"
-          :content="item.content"
-          mode="area"
-          :english="english"
-          :science="science"
-        />
-        <PFormulaEdit
-          v-else-if="item.type === 'formula'"
-          :model-value="item.content"
-          :editable="editable"
-          :answer="answer"
-        />
-        <PImage v-else-if="item.type === 'image'" :src="item.src" />
-        <PTableEdit
-          v-else-if="item.type === 'table'"
-          :model-value="item.content"
-          :english="english"
-          :editable="false"
-        />
-        <!-- eslint-disable-next-line no-irregular-whitespace -->
-        <PBlank
-          v-else-if="item.type === 'blank'"
-          :content="item"
-          :english="english"
-        />
-        <PMaterial
-          v-else-if="item.type === 'material'"
-          :material="item.material"
-        />
-        <ElDivider v-else-if="item.type === 'divider'" />
-        <PProblem
-          v-else-if="item.type === 'problem'"
-          :problem="item.problem"
-          mode="display"
-          :level="0"
-        />
-        <PArticle v-else-if="item.type === 'article'" :article="item.article" />
-      </span>
+      <ContentItem
+        v-for="(item, idx) in ctns"
+        :key="idx"
+        :item="item"
+        :editable="editable"
+        :answer="answer"
+        :prompt="prompt"
+        :fontmode="fontmode"
+        :english="english"
+        :full-italic="fullItalic"
+        :title="title"
+        :author="author"
+        :science="science"
+      />
     </div>
   </div>
   <slot name="append" />

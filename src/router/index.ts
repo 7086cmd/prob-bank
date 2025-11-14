@@ -35,12 +35,12 @@ const router = createRouter({
     {
       path: '/problem/insert',
       name: 'problem_insert',
-      component: () => import('../views/problem/InsertProblem.vue')
+      component: () => import('../views/problem/EditProblem.vue')
     },
     {
       path: '/problem/modify/:id',
       name: 'problem_modify',
-      component: () => import('../views/problem/ModifyProblem.vue')
+      component: () => import('../views/problem/EditProblem.vue')
     },
     {
       path: '/problem/display/:id',
@@ -50,12 +50,12 @@ const router = createRouter({
     {
       path: '/problem-group/insert',
       name: 'problem-group_insert',
-      component: () => import('../views/problem-group/InsertProblemGroup.vue')
+      component: () => import('../views/problem-group/EditProblemGroup.vue')
     },
     {
       path: '/problem-group/modify/:id',
       name: 'problem-group_modify',
-      component: () => import('../views/problem-group/ModifyProblemGroup.vue')
+      component: () => import('../views/problem-group/EditProblemGroup.vue')
     },
     {
       path: '/problem-group/display/:id',

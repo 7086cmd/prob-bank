@@ -1,0 +1,83 @@
+<script setup lang="ts">
+import type { Content } from '@/../@types/content'
+import PImage from './PImage.vue'
+import PTableEdit from './PTableEdit.vue'
+import PText from './PText.vue'
+import PBlank from './PBlank.vue'
+import PTextEdit from './PTextEdit.vue'
+import PFormulaEdit from './PFormulaEdit.vue'
+import PMaterial from './PMaterial.vue'
+import { ElDivider } from 'element-plus'
+import PProblem from '../problems/PProblem.vue'
+import PArticle from './PArticle.vue'
+
+defineProps<{
+  item: Content
+  editable?: boolean
+  answer?: boolean
+  prompt?: boolean
+  fontmode?: 'quote'
+  english?: boolean
+  fullItalic?: boolean
+  title?: boolean
+  author?: boolean
+  science?: boolean
+}>()
+</script>
+
+<template>
+  <span class="content">
+    <PTextEdit
+      v-if="item.type === 'text'"
+      :class="prompt ? 'quote' : ''"
+      :model-value="item.content"
+      :editable="editable"
+      :answer="answer"
+      :fontmode="fontmode"
+      :english="english"
+      :italic="fullItalic"
+      :prompt="prompt"
+      :title="title"
+      :author="author"
+      :science="science"
+    />
+    <PText
+      v-else-if="item.type === 'textarea'"
+      :content="item.content"
+      mode="area"
+      :english="english"
+      :science="science"
+    />
+    <PFormulaEdit
+      v-else-if="item.type === 'formula'"
+      :model-value="item.content"
+      :editable="editable"
+      :answer="answer"
+    />
+    <PImage v-else-if="item.type === 'image'" :src="item.src" />
+    <PTableEdit
+      v-else-if="item.type === 'table'"
+      :model-value="item.content"
+      :english="english"
+      :editable="false"
+    />
+    <!-- eslint-disable-next-line no-irregular-whitespace -->
+    <PBlank
+      v-else-if="item.type === 'blank'"
+      :content="item"
+      :english="english"
+    />
+    <PMaterial
+      v-else-if="item.type === 'material'"
+      :material="item.material"
+    />
+    <ElDivider v-else-if="item.type === 'divider'" />
+    <PProblem
+      v-else-if="item.type === 'problem'"
+      :problem="item.problem"
+      mode="display"
+      :level="0"
+    />
+    <PArticle v-else-if="item.type === 'article'" :article="item.article" />
+  </span>
+</template>
