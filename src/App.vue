@@ -52,6 +52,7 @@ import { useStatusStore } from './stores/status'
 import { useRouter, useRoute } from 'vue-router'
 import { usePaperStore } from './stores/paper'
 import dialogs from '@/plugins/dialogs'
+import { exportPaperToLatex } from '@/services/LatexExportService'
 
 const status = useStatusStore()
 const router = useRouter()
@@ -69,6 +70,31 @@ function showSizeChange() {
   setTimeout(() => {
     loading.close()
   }, 1200)
+}
+
+async function exportLatex(includeAnswers: boolean) {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在生成LaTeX文件...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
+
+  try {
+    await exportPaperToLatex(paper.$state, includeAnswers)
+    ElNotification({
+      title: '导出成功',
+      message: `LaTeX文件已${includeAnswers ? '（含答案）' : ''}成功导出`,
+      type: 'success',
+    })
+  } catch (error) {
+    ElNotification({
+      title: '导出失败',
+      message: String(error),
+      type: 'error',
+    })
+  } finally {
+    loading.close()
+  }
 }
 
 const { width, height } = useWindowSize()
@@ -287,6 +313,26 @@ const useWindowControls = (
                               >
                                 <ElButton text @click="paper.save('complete')">
                                   下载完整版
+                                </ElButton>
+                              </ElTooltip>
+                              <br />
+                              <ElTooltip
+                                content="导出为LaTeX格式，不含答案，适合学术论文和出版"
+                                :effect="darkmode ? 'dark' : 'light'"
+                                placement="top"
+                              >
+                                <ElButton text @click="exportLatex(false)">
+                                  导出LaTeX（无答案）
+                                </ElButton>
+                              </ElTooltip>
+                              <br />
+                              <ElTooltip
+                                content="导出为LaTeX格式，包含答案和解析"
+                                :effect="darkmode ? 'dark' : 'light'"
+                                placement="bottom"
+                              >
+                                <ElButton text @click="exportLatex(true)">
+                                  导出LaTeX（含答案）
                                 </ElButton>
                               </ElTooltip>
                             </ElDropdownMenu>
